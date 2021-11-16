@@ -4,6 +4,27 @@
              xmlns:local="clr-namespace:FreeDiscussions.Client"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <Color x:Key="PrimaryBackground">#FAFAFA</Color>
+        <Color x:Key="SecondaryBackground">#EBEBEB</Color>
+        <Color x:Key="PrimaryText">#0098DD</Color>
+        <Color x:Key="SecondaryText">#383A42</Color>
 
+        <Style TargetType="{x:Type Button}" x:Key="TopButtonStyle">
+            <Setter Property="Foreground" Value="#0CA5E9" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#546E7A" TargetName="Border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
