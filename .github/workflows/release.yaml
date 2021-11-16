@@ -1,0 +1,56 @@
+# This job triggers on every push to master or pull request
+# It runs lerna version and increases the version number of
+# changed packages (patch)
+# This will will trigger workflow => deploy
+
+name: Release
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+
+jobs:
+  build_and_test:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        targetplatform: [x64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+
+      - name: "Client: Get Version"
+        uses: kzrnm/get-net-sdk-project-versions-action@v1
+        id: get-version
+        with:
+          proj-path: ./packages/FreeDiscussions.Client/FreeDiscussions.Client.csproj
+
+      - name: "Client: Build"
+        run: cd packages && dotnet build FreeDiscussions.Client
+
+      - name: "Client: Pack"
+        run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
+
+      - name: "Client: Create Release ZIP"
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'FreeDiscussions.Client-${{steps.get-version.outputs.version-prefix}}.zip'
+          directory: ./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1
+          exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json *.deps.json'      
+
+      - name: "Client: Upload Release ZIP"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1/FreeDiscussions.Client-${{steps.get-version.outputs.version-prefix}}.zip"
+          tag: Client-${{steps.get-version.outputs.version-prefix}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true

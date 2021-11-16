@@ -1,0 +1,31 @@
+# This jobs triggers on every push to
+# a non master branch.
+# It builds and tests.
+
+name: Build and Test
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        targetplatform: [x64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+
+      - name: "Client: Build"
+        run: cd packages && dotnet build FreeDiscussions.Client
+      - name: "Client: Pack"
+        run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
