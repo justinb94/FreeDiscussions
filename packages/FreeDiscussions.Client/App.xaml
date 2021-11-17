@@ -31,8 +31,8 @@
                         <ColumnDefinition Width="16"/>
                     </Grid.ColumnDefinitions>
                     <svg1:SVGImage Source="{Binding HeaderImage}" Height="18" Width="18" Margin="0 3"/>
-                    <Thumb Style="{DynamicResource InvisibleThumbStyle}" dragablz:DragablzItem.IsCustomThumb="True" />
                     <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
+                    <Thumb Style="{DynamicResource InvisibleThumbStyle}"  dragablz:DragablzItem.IsCustomThumb="True" Grid.Column="0" Grid.ColumnSpan="2"/>
 
                     <Button Style="{StaticResource TopButtonStyle}" Tag="{Binding Id}" Grid.Column="2" BorderThickness="0" Name="CloseButton" Command="{Binding Close}">
                         <Button.Background>
@@ -71,7 +71,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#546E7A" TargetName="Border" />
+                                            <Setter Property="Background" Value="#0098DD" TargetName="Border" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
