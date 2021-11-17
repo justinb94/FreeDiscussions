@@ -11,7 +11,7 @@
         xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
         xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1200">
     <Window.Background>
         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
     </Window.Background>
@@ -165,7 +165,7 @@
                         </dragablz:TabablzControl.ContentTemplate>
                     </dragablz:TabablzControl>
 
-                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Margin="0,138,0,0" Grid.RowSpan="2"/>
+                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.Row="1"/>
 
                     <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Margin="0,8,0,0" Grid.RowSpan="2">
                         <!--<dragablz:TabablzControl.HeaderSuffixContent>

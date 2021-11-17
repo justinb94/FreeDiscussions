@@ -30,11 +30,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="16"/>
                     </Grid.ColumnDefinitions>
-                    <svg1:SVGImage Source="{Binding HeaderImage}" Height="18" Width="18" Margin="0 3"/>
+                    <svg1:SVGImage Source="{Binding HeaderImage}" Height="16" Width="16" Margin="0 3"/>
                     <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
                     <Thumb Style="{DynamicResource InvisibleThumbStyle}"  dragablz:DragablzItem.IsCustomThumb="True" Grid.Column="0" Grid.ColumnSpan="2"/>
 
-                    <Button Style="{StaticResource TopButtonStyle}" Tag="{Binding Id}" Grid.Column="2" BorderThickness="0" Name="CloseButton" Command="{Binding Close}">
+                    <Button Style="{StaticResource TopButtonStyle}" Grid.Column="2" BorderThickness="0" Name="CloseButton" Command="{Binding Close}">
                         <Button.Background>
                             <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
                         </Button.Background>

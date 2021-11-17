@@ -5,9 +5,9 @@ using System.Windows.Controls;
 
 namespace FreeDiscussions.Client.UI
 {
-    public abstract class Panel : Control
+    public class Panel : UserControl
     {
-        private Action onClose;
+        public Action onClose;
 
         public Panel(Action onClose)
         {
