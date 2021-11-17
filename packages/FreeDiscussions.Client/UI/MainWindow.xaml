@@ -1,4 +1,4 @@
-﻿<Window x:Class="FreeDiscussions.Client.MainWindow"
+﻿<Window x:Class="FreeDiscussions.Client.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -22,13 +22,27 @@
         ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- primary color -->
+                <ResourceDictionary>
+                    <!-- include your primary palette -->
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.BlueGrey.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-
+ 
         <Grid.Background>
             <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
         </Grid.Background>
@@ -134,28 +148,14 @@
 
             <Border Grid.Column="2">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="96*"/>
-                        <ColumnDefinition Width="17*"/>
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="8" Name="BottomPanelSplitterRowDefinition"/>
                         <RowDefinition Height="240" Name="BottomPanelRowDefinition"/>
                     </Grid.RowDefinitions>
-                    <dragablz:TabablzControl Name="MainPanel"  Grid.Row="0" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Grid.ColumnSpan="2">
-                        <dragablz:TabablzControl.HeaderItemTemplate>
-                            <DataTemplate DataType="{x:Type models:TabItemModel}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="22"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Image MaxHeight="18" MaxWidth="16" Grid.Column="0" Source="/text-icon.png" HorizontalAlignment="Left" Stretch="Fill" VerticalAlignment="Bottom" />
-                                    <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </dragablz:TabablzControl.HeaderItemTemplate>
+
+
+                    <dragablz:TabablzControl Name="MainPanel"  Grid.Row="0" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" HeaderItemTemplate="{StaticResource TabItemTemplate}">
                         <dragablz:TabablzControl.ContentTemplate>
                             <DataTemplate DataType="{x:Type models:TabItemModel}">
                                 <Grid>
@@ -165,9 +165,9 @@
                         </dragablz:TabablzControl.ContentTemplate>
                     </dragablz:TabablzControl>
 
-                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.ColumnSpan="2" Margin="0,138,0,0" Grid.RowSpan="2"/>
+                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Margin="0,138,0,0" Grid.RowSpan="2"/>
 
-                    <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Grid.ColumnSpan="2" Margin="0,8,0,0" Grid.RowSpan="2">
+                    <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Margin="0,8,0,0" Grid.RowSpan="2">
                         <!--<dragablz:TabablzControl.HeaderSuffixContent>
                         <Button Command="{Binding ...}">+</Button>
                         </dragablz:TabablzControl.HeaderSuffixContent>-->

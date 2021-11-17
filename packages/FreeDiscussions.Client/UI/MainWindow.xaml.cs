@@ -1,11 +1,15 @@
-﻿using System;
+﻿using FreeDiscussions.Client.Models;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace FreeDiscussions.Client
+namespace FreeDiscussions.Client.UI
 {
     public partial class MainWindow : Window
     {
@@ -48,6 +52,7 @@ namespace FreeDiscussions.Client
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            ShowSettingsPanel();
         }
 
         private void WindowDrag(object sender, MouseButtonEventArgs e) // MouseDown
@@ -61,6 +66,35 @@ namespace FreeDiscussions.Client
         {
             HwndSource hwndSource = PresentationSource.FromVisual((Visual)sender) as HwndSource;
             SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
+        }
+
+        private void ShowSettingsPanel()
+        {
+            var s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
+            if (s == null)
+            {
+                s = new ObservableCollection<TabItemModel>();
+            }
+
+            s.Add(new TabItemModel
+            {
+                HeaderText = "Settings",
+                HeaderImage = "/FreeDiscussions.Client;component/Resources/gear.svg",
+                Control = new SettingsPanel(() =>
+                {
+                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Settings").FirstOrDefault()));
+                }),
+                Close = new DelegateCommand<string>((s) =>
+                {
+                    var _s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
+                    var newSource = _s.Where(x => x.HeaderText != "Settings").ToArray();
+                    MainPanel.ItemsSource = newSource;
+                    MainPanel.SelectedIndex = _s.Count - 1;
+                })
+            });
+
+            MainPanel.ItemsSource = s;
+            MainPanel.SelectedIndex = s.Count - 1;
         }
     }
 }

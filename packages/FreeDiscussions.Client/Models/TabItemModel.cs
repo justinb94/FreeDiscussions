@@ -7,5 +7,7 @@ namespace FreeDiscussions.Client.Models
         public string HeaderText { get; set; }
         public string HeaderImage { get; set; }
         public Control Control { get; set; }
+
+        public DelegateCommand<string> Close { get; set; }
     }
 }
