@@ -76,6 +76,16 @@ namespace FreeDiscussions.Client.UI
                 s = new ObservableCollection<TabItemModel>();
             }
 
+            // check if settings panel is already open
+            var current = s.Select((x, i) => new { Index = i }).FirstOrDefault();
+            if (current != null)
+            {
+                // select settings panel
+                MainPanel.SelectedIndex = current.Index;
+                return;
+            }
+
+            // settings panel is not already open => open it
             s.Add(new TabItemModel
             {
                 HeaderText = "Settings",
