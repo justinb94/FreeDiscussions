@@ -1,0 +1,198 @@
+﻿<Window x:Class="FreeDiscussions.Client.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        BorderThickness="0"
+        xmlns:local="clr-namespace:FreeDiscussions.Client"
+        xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
+        xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1200">
+    <Window.Background>
+        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+    </Window.Background>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+        CaptionHeight="0"
+        ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- primary color -->
+                <ResourceDictionary>
+                    <!-- include your primary palette -->
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.BlueGrey.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+ 
+        <Grid.Background>
+            <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+        </Grid.Background>
+
+        <Border Grid.Row="0" MouseDown="WindowDrag">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+            </Border.Background>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="GithubButton" Click="GithubButton_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </Button.Background>
+
+                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/github.svg" Height="18" Width="18" Margin="0 3"/>
+            </Button>
+
+            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="SettingsButton" Click="SettingsButton_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </Button.Background>
+                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/gear.svg" Height="18" Width="18" Margin="0 3"/>
+            </Button>
+
+            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="MinimizeButton" Click="MinimizeButton_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </Button.Background>
+
+                <Rectangle
+                    Margin="0 6 0 0"
+                    Width="12"
+                    Height="1"
+                    >
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+
+            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="MaximizeButton" Click="MaximizeButton_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </Button.Background>
+                <TextBlock Background="Transparent" Text="▭" FontSize="17" FontFamily="Arial">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </Button>
+
+            <Button Style="{StaticResource TopButtonStyle}" MinWidth="28" Height="28" BorderThickness="0" Name="CloseButton" Click="CloseButton_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </Button.Background>
+                <Button.Content>
+                    <TextBlock FontSize="24" Margin="0 -18" Text="×">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+
+        <Border Grid.Row="2">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+            </Border.Background>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <dragablz:TabablzControl Name="SidebarPanel"  Grid.Column="0" SelectedIndex="0"  BorderThickness="0"  TabStripPlacement="Left">
+                <dragablz:TabablzControl.HeaderItemTemplate>
+                    <DataTemplate DataType="{x:Type models:TabItemModel}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="28"/>
+                            </Grid.RowDefinitions>
+                            <Image MaxHeight="42" MaxWidth="42" Grid.Row="0" Source="{Binding HeaderImage}" HorizontalAlignment="Left" Margin="0,0,0,0" Stretch="Fill" VerticalAlignment="Bottom" />
+                            <TextBlock HorizontalAlignment="Center" Grid.Row="1" Margin="0 3" Text="{Binding HeaderText}"/>
+                        </Grid>
+                    </DataTemplate>
+                </dragablz:TabablzControl.HeaderItemTemplate>
+                <dragablz:TabablzControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type models:TabItemModel}">
+                        <Grid>
+                            <ContentControl Content="{Binding Control}" />
+                        </Grid>
+                    </DataTemplate>
+                </dragablz:TabablzControl.ContentTemplate>
+            </dragablz:TabablzControl>
+
+            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent"/>
+
+            <Border Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="8" Name="BottomPanelSplitterRowDefinition"/>
+                        <RowDefinition Height="240" Name="BottomPanelRowDefinition"/>
+                    </Grid.RowDefinitions>
+
+
+                    <dragablz:TabablzControl Name="MainPanel"  Grid.Row="0" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" HeaderItemTemplate="{StaticResource TabItemTemplate}">
+                        <dragablz:TabablzControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type models:TabItemModel}">
+                                <Grid>
+                                    <ContentControl Content="{Binding Control}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dragablz:TabablzControl.ContentTemplate>
+                    </dragablz:TabablzControl>
+
+                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.Row="1"/>
+
+                    <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Margin="0,8,0,0" Grid.RowSpan="2">
+                        <!--<dragablz:TabablzControl.HeaderSuffixContent>
+                        <Button Command="{Binding ...}">+</Button>
+                        </dragablz:TabablzControl.HeaderSuffixContent>-->
+                        <dragablz:TabablzControl.HeaderItemTemplate>
+                            <DataTemplate DataType="{x:Type models:TabItemModel}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image MaxHeight="18" MaxWidth="16" Grid.Column="0" Source="/text-icon.png" HorizontalAlignment="Left" Stretch="Fill" VerticalAlignment="Bottom" />
+                                    <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </dragablz:TabablzControl.HeaderItemTemplate>
+                        <dragablz:TabablzControl.ContentTemplate>
+                            <DataTemplate DataType="{x:Type models:TabItemModel}">
+                                <Grid>
+                                    <ContentControl Content="{Binding Control}" />
+                                </Grid>
+                            </DataTemplate>
+                        </dragablz:TabablzControl.ContentTemplate>
+                    </dragablz:TabablzControl>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
