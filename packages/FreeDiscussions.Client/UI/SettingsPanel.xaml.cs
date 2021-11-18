@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Usenet.Nntp;
 
 namespace FreeDiscussions.Client.UI
 {
@@ -50,7 +52,17 @@ namespace FreeDiscussions.Client.UI
 
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			// TODO: Check connection
+			SaveSettings();
+		}
+
+		private async Task SaveSettings()
+		{
+			if (!await ConnectionManager.CheckConnection(this.settings.Hostname, this.settings.Port, this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password, this.settings.SSL))
+			{
+				MessageBox.Show("Can't connect, please check your settings.");
+				return;
+			}
+
 			SettingsModel.SetCredentials(this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password);
 			string json = JsonConvert.SerializeObject(this.settings, Formatting.Indented);
 			File.WriteAllText(settingsPath, json);
@@ -70,6 +82,24 @@ namespace FreeDiscussions.Client.UI
 				DownloadFolderTextBox.Text = dialog.SelectedPath;
 				this.settings.DownloadFolder = dialog.SelectedPath;
 			}
+		}
+	}
+
+	public class ConnectionManager
+	{
+		public static async Task<bool> CheckConnection(string host, int port, string userName, string password, bool useSSL)
+		{
+			var client = new Usenet.Nntp.NntpClient(new NntpConnection());
+			try
+			{
+				await client.ConnectAsync(host, port, useSSL);
+				return client.Authenticate(userName, password);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+			return false;
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FreeDiscussions.Client.Models
 {
-    public partial class SettingsModel
+    public class SettingsModel
 	{
 		public string Hostname { get; set; }
 		public int Port { get; set; }
