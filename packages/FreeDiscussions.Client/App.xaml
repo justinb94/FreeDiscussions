@@ -49,6 +49,29 @@
                 </Grid>
             </DataTemplate>
 
+            
+            <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+                <!--<Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Border Background="Red"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>-->
+                <Setter Property="Stylus.IsFlicksEnabled" Value="True" />
+                <Style.Triggers>
+                    <Trigger Property="Orientation" Value="Horizontal">
+                        <Setter Property="Height" Value="6" />
+                        <Setter Property="MinHeight" Value="6" />
+                    </Trigger>
+                    <Trigger Property="Orientation" Value="Vertical">
+                        <Setter Property="Width" Value="6" />
+                        <Setter Property="MinWidth" Value="6" />
+                    </Trigger>
+                </Style.Triggers>
+
+            </Style>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>

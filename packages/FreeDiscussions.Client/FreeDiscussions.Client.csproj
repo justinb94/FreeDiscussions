@@ -11,6 +11,9 @@
     <None Remove="github.svg" />
     <None Remove="Resources\gear.svg" />
     <None Remove="Resources\github.svg" />
+    <None Remove="Resources\globe.svg" />
+    <None Remove="Resources\home.svg" />
+    <None Remove="Resources\search.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +29,15 @@
   <ItemGroup>
     <Resource Include="Resources\gear.svg" />
     <Resource Include="Resources\github.svg" />
+    <Resource Include="Resources\globe.svg" />
+    <Resource Include="Resources\home.svg" />
+    <Resource Include="Resources\search.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NewsgroupCategories.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

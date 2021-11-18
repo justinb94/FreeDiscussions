@@ -1,6 +1,7 @@
 ﻿using FreeDiscussions.Client.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace FreeDiscussions.Client.UI
 
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			SaveSettings();
+			_ = SaveSettings();
 		}
 
 		private async Task SaveSettings()
@@ -69,11 +70,6 @@ namespace FreeDiscussions.Client.UI
 			this.onClose();
 		}
 
-		private void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.onClose();
-		}
-
 		private void ChoseDownloadFolderButton_Click(object sender, RoutedEventArgs e)
 		{
 			var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
@@ -87,13 +83,17 @@ namespace FreeDiscussions.Client.UI
 
 	public class ConnectionManager
 	{
+		private static List<NntpClient> _clients = new List<NntpClient>();
+
 		public static async Task<bool> CheckConnection(string host, int port, string userName, string password, bool useSSL)
 		{
-			var client = new Usenet.Nntp.NntpClient(new NntpConnection());
+			var client = new NntpClient(new NntpConnection());
 			try
 			{
 				await client.ConnectAsync(host, port, useSSL);
-				return client.Authenticate(userName, password);
+				client.Authenticate(userName, password);
+				client.Quit();
+				return true;
 			}
 			catch (Exception ex)
 			{
