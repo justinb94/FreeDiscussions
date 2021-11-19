@@ -49,7 +49,7 @@ namespace FreeDiscussions.Client.UI
             SidebarPanel.ItemsSource = s;
 
             MainPanel.ItemsSource = new ObservableCollection<TabItemModel>();
-            BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
+            // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

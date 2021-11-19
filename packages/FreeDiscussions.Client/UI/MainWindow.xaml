@@ -150,8 +150,8 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="8" Name="BottomPanelSplitterRowDefinition"/>
-                        <RowDefinition Height="240" Name="BottomPanelRowDefinition"/>
+                        <!--<RowDefinition Height="8" Name="BottomPanelSplitterRowDefinition"/>
+                        <RowDefinition Height="240" Name="BottomPanelRowDefinition"/>-->
                     </Grid.RowDefinitions>
 
 
@@ -165,12 +165,12 @@
                         </dragablz:TabablzControl.ContentTemplate>
                     </dragablz:TabablzControl>
 
-                    <GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.Row="1"/>
+                    <!--<GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.Row="1"/>
 
                     <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Margin="0,8,0,0" Grid.RowSpan="2">
-                        <!--<dragablz:TabablzControl.HeaderSuffixContent>
+                        --><!--<dragablz:TabablzControl.HeaderSuffixContent>
                         <Button Command="{Binding ...}">+</Button>
-                        </dragablz:TabablzControl.HeaderSuffixContent>-->
+                        </dragablz:TabablzControl.HeaderSuffixContent>--><!--
                         <dragablz:TabablzControl.HeaderItemTemplate>
                             <DataTemplate DataType="{x:Type models:TabItemModel}">
                                 <Grid>
@@ -190,7 +190,7 @@
                                 </Grid>
                             </DataTemplate>
                         </dragablz:TabablzControl.ContentTemplate>
-                    </dragablz:TabablzControl>
+                    </dragablz:TabablzControl>-->
                 </Grid>
             </Border>
         </Grid>
