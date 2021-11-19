@@ -1,0 +1,3 @@
+﻿- Full MVVM
+- Show status on loading messages
+- Add support for UUEncoded messages
