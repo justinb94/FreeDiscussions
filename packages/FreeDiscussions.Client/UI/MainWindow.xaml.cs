@@ -103,7 +103,7 @@ namespace FreeDiscussions.Client.UI
             }
 
             // check if settings panel is already open
-            var current = s.Where(x => x.HeaderText == "Settings").Select((x, i) => new { Index = i }).FirstOrDefault();
+            var current = s.Select((x, i) => new { Index = i, Item= x }).Where(x => x.Item.HeaderText == "Settings").FirstOrDefault();
             if (current != null)
             {
                 // select settings panel
