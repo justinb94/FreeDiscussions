@@ -36,7 +36,11 @@ namespace FreeDiscussions.Client
 			try
 			{
 				await result.ConnectAsync(settings.Hostname, settings.Port, settings.SSL);
-				result.Authenticate(login.Username, login.Password);
+				var success = result.Authenticate(login.Username, login.Password);
+				if (!success)
+				{
+					Console.WriteLine("nope");
+				}
 			}
 			catch { }
 
