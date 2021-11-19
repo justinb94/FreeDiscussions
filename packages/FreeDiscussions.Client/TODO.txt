@@ -1,3 +1,4 @@
 ﻿- Full MVVM
 - Show status on loading messages
 - Add support for UUEncoded messages
+- Validating user input (Post to newsgroup)
