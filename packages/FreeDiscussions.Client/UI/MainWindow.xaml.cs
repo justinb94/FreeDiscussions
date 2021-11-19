@@ -137,6 +137,16 @@ namespace FreeDiscussions.Client.UI
             {
                 s = new ObservableCollection<TabItemModel>();
             }
+
+            // check if panel already exists
+            if (s.Any(x => x.HeaderText == name))
+            {
+                var i = s.Select((x, i) => new { Item = x, Index = i }).Where(x => x.Item.HeaderText == name).First();
+                MainPanel.SelectedIndex = i.Index;
+                return;
+            }
+
+            // add panel
             s.Add(new TabItemModel
             {
                 HeaderText = name,
@@ -151,6 +161,7 @@ namespace FreeDiscussions.Client.UI
                 })
             });
             MainPanel.ItemsSource = s;
+            MainPanel.SelectedIndex = s.Count - 1;
         }
     }
 }
