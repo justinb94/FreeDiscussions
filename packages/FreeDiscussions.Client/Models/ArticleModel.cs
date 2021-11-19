@@ -9,5 +9,6 @@ namespace FreeDiscussions.Client.Models
     {
         public string Subject { get; set; }
         public string MessageId { get; internal set; }
+        public DateTime Date { get; internal set; }
     }
 }
