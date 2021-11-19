@@ -43,79 +43,91 @@ namespace FreeDiscussions.Client.UI
         private async Task LoadMessage(ArticleModel article)
         {
             ArticleBody.Text = "Loading...";
+            DownloadButton.Visibility = System.Windows.Visibility.Hidden;
 
             SelectedArticle = article;
 
             var client = await ConnectionManager.GetClient();
-            var settings = SettingsModel.Read();
-            client.Group(SelectedNewsgroup);
-
             try
             {
-
-                var a = client.Article(article.MessageId);
-                if (a.Article == null)
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ArticleBody.Text = "Message not found";
-                    });
-                    return;
-                }
+                var settings = SettingsModel.Read();
+                client.Group(SelectedNewsgroup);
 
                 try
                 {
-                    // decode the yEnc-encoded article
-                    using (YencStream yencStream = YencStreamDecoder.Decode(a.Article.Body))
+
+                    var a = client.Article(article.MessageId);
+                    if (a.Article == null)
                     {
                         this.Dispatcher.Invoke(() =>
-                            {
-                                ArticleBody.Text = "This is a binary. Press Download to save on disk.";
-                            });
+                        {
+                            ArticleBody.Text = "Message not found";
+                            ArticleContentRow.Height = new System.Windows.GridLength(280);
+                        });
+                        return;
+                    }
+
+                    try
+                    {
+                        // decode the yEnc-encoded article
+                        using (YencStream yencStream = YencStreamDecoder.Decode(a.Article.Body))
+                        {
+                            this.Dispatcher.Invoke(() =>
+                                {
+                                    DownloadButton.Visibility = System.Windows.Visibility.Visible;
+                                    ArticleBody.Text = "This is a binary. Press Download to save on disk.";
+                                    ArticleContentRow.Height = new System.Windows.GridLength(280);
+                                });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var articleWithBody = client.Body(article.MessageId);
+                        var text = String.Join("\n", articleWithBody.Article.Body.ToList());
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            ArticleBody.Text = text;
+                            ArticleContentRow.Height = new System.Windows.GridLength(280);
+                        });
+
+                        // try uuencode 
+
+                        // Text 
+                        //var articleWithBody = client.nntp.Body(article.MessageId);
+                        //var text = String.Join("\n", articleWithBody.Article.Body.ToList());
+
+                        //if (text.StartsWith("beginn"))
+                        //{
+                        //    //uuenceded
+                        //    try
+                        //    {
+                        //        var d = uuDecode(text);
+                        //    }
+                        //    catch (Exception exo)
+                        //    {
+                        //        this.Dispatcher.Invoke(() =>
+                        //        {
+                        //            ArticleBody.Text = text;
+                        //        });
+
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    this.Dispatcher.Invoke(() =>
+                        //    {
+                        //        ArticleBody.Text = text;
+                        //    });
+                        //}
                     }
                 }
                 catch (Exception ex)
                 {
-                    var articleWithBody = client.Body(article.MessageId);
-                    var text = String.Join("\n", articleWithBody.Article.Body.ToList());
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        ArticleBody.Text = text;
-                    });
-
-                    // try uuencode 
-
-                    // Text 
-                    //var articleWithBody = client.nntp.Body(article.MessageId);
-                    //var text = String.Join("\n", articleWithBody.Article.Body.ToList());
-
-                    //if (text.StartsWith("beginn"))
-                    //{
-                    //    //uuenceded
-                    //    try
-                    //    {
-                    //        var d = uuDecode(text);
-                    //    }
-                    //    catch (Exception exo)
-                    //    {
-                    //        this.Dispatcher.Invoke(() =>
-                    //        {
-                    //            ArticleBody.Text = text;
-                    //        });
-
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    this.Dispatcher.Invoke(() =>
-                    //    {
-                    //        ArticleBody.Text = text;
-                    //    });
-                    //}
                 }
             }
-            catch (Exception ex)
+            finally
             {
+                client.Quit();
             }
         }
 
@@ -125,22 +137,28 @@ namespace FreeDiscussions.Client.UI
             var settings = SettingsModel.Read();
 
             var client = await ConnectionManager.GetClient();
+            try
+            {
 
-            var group = client.Group(SelectedNewsgroup);
+                var group = client.Group(SelectedNewsgroup);
 
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+                DispatcherTimer dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                dispatcherTimer.Start();
 
-            BindingOperations.EnableCollectionSynchronization(articles, _syncLock);
-            articles.Clear();
+                BindingOperations.EnableCollectionSynchronization(articles, _syncLock);
+                articles.Clear();
 
-            SelectedGroupHigh = group.Group.HighWaterMark;
-            SelectedGroupLow = group.Group.LowWaterMark;
+                SelectedGroupHigh = group.Group.HighWaterMark;
+                SelectedGroupLow = group.Group.LowWaterMark;
 
-            Task.Factory.StartNew(() => GetFirst());
-            
+                Task.Factory.StartNew(() => GetFirst());
+            }
+            finally
+            {
+                client.Quit();
+            }
         }
 
         async Task GetFirst()
@@ -148,25 +166,32 @@ namespace FreeDiscussions.Client.UI
             var credentials = SettingsModel.GetCredentials();
             var settings = SettingsModel.Read();
             var client = await ConnectionManager.GetClient();
-
-            client.Group(SelectedNewsgroup);
-
-            var e = 0;
-            for (var i = SelectedGroupHigh; i != SelectedGroupLow; i--)
+            try
             {
-                var a = client.Head(i);
-                if (a.Code == 221)
-                {
-                    articles.Add(ArticleFactory.GetArticle(a));
-                }
 
-                e++;
+                var g = client.Group(SelectedNewsgroup);
 
-                if (e > 20)
+                var e = 0;
+                for (var i = SelectedGroupHigh; i != SelectedGroupLow; i--)
                 {
-                    SelectedGroupHigh = i - 1;
-                    break;
+                    var a = client.Head(i);
+                    if (a.Code == 221)
+                    {
+                        articles.Add(ArticleFactory.GetArticle(a));
+                    }
+
+                    e++;
+
+                    if (e > 100)
+                    {
+                        SelectedGroupHigh = i - 1;
+                        break;
+                    }
                 }
+            }
+            finally
+            {
+                client.Quit();
             }
         }
 
@@ -185,36 +210,43 @@ namespace FreeDiscussions.Client.UI
             var settings = SettingsModel.Read();
 
             var client = await ConnectionManager.GetClient();
-            var article = client.Article(SelectedArticle.MessageId);
-
-            using (YencStream yencStream = YencStreamDecoder.Decode(article.Article.Body))
+            try
             {
-                YencHeader header = yencStream.Header;
+                var article = client.Article(SelectedArticle.MessageId);
 
-                VistaSaveFileDialog dialog = new VistaSaveFileDialog
+                using (YencStream yencStream = YencStreamDecoder.Decode(article.Article.Body))
                 {
-                    FileName = header.FileName
-                };
-                if (dialog.ShowDialog().Value)
-                {
-                    var target = dialog.FileName;
+                    YencHeader header = yencStream.Header;
 
-                    if (!File.Exists(target))
+                    VistaSaveFileDialog dialog = new VistaSaveFileDialog
                     {
-                        // create file and pre-allocate disk space for it
-                        using (FileStream stream = File.Create(target))
+                        FileName = header.FileName
+                    };
+                    if (dialog.ShowDialog().Value)
+                    {
+                        var target = dialog.FileName;
+
+                        if (!File.Exists(target))
                         {
-                            stream.SetLength(header.FileSize);
+                            // create file and pre-allocate disk space for it
+                            using (FileStream stream = File.Create(target))
+                            {
+                                stream.SetLength(header.FileSize);
+                            }
+                        }
+                        using (FileStream stream = File.Open(
+                            target, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+                        {
+                            // copy incoming parts to file
+                            stream.Position = header.PartOffset;
+                            yencStream.CopyTo(stream);
                         }
                     }
-                    using (FileStream stream = File.Open(
-                        target, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
-                    {
-                        // copy incoming parts to file
-                        stream.Position = header.PartOffset;
-                        yencStream.CopyTo(stream);
-                    }
                 }
+            }
+            finally
+            {
+                client.Quit();
             }
         }
     }

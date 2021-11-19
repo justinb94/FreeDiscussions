@@ -12,7 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="8"/>
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="0" x:Name="ArticleContentRow"/>
         </Grid.RowDefinitions>
 
         <ListBox Grid.Row="0" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
@@ -20,11 +20,17 @@
                 <DataTemplate>
                     <Grid Margin="0,1" Background="Transparent">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="14" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200" />
                         </Grid.ColumnDefinitions>
                         <!--<svg1:SVGImage Grid.Column="0"  Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="18" Width="18" Margin="0 3"/>-->
-                        <TextBlock Margin="3 0" Grid.Column="1" FontWeight="SemiBold" FontSize="12" Text="{Binding Subject}">
+                        <TextBlock Margin="3 0" Grid.Column="0" FontWeight="SemiBold" FontSize="12" Text="{Binding Subject}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
+                            </TextBlock.Foreground>
+                        </TextBlock>
+
+                        <TextBlock Margin="3 0" Grid.Column="1" FontWeight="SemiBold" FontSize="12" Text="{Binding Date}">
                             <TextBlock.Foreground>
                                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
                             </TextBlock.Foreground>
@@ -34,9 +40,9 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Background="Transparent"/>
+        <GridSplitter x:Name="Splitter" HorizontalAlignment="Stretch" Grid.Row="1" Background="Transparent"/>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" x:Name="ArticleGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="28"/>
                 <RowDefinition Height="*"/>
@@ -67,7 +73,7 @@
                         </Border>
                     </Button.Content>
                 </Button>
-                <Button x:Name="DownloadButton" Click="DownloadButton_Click" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
+                <Button x:Name="DownloadButton" Click="DownloadButton_Click" Visibility="Hidden" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                     </Button.Background>
@@ -88,11 +94,13 @@
             </StackPanel>
             
             <Border Grid.Row="1">
-                <TextBlock Name="ArticleBody" Padding="6" FontSize="11" TextWrapping="WrapWithOverflow">
-                    <TextBlock.Background>
-                        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-                    </TextBlock.Background>
-                </TextBlock>
+                <ScrollViewer>
+                    <TextBlock Name="ArticleBody" Padding="6" FontSize="11" TextWrapping="WrapWithOverflow">
+                        <TextBlock.Background>
+                            <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                        </TextBlock.Background>
+                    </TextBlock>
+                </ScrollViewer>
             </Border>
         </Grid>
 
