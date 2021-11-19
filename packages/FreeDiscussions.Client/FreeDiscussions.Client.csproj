@@ -5,12 +5,19 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <VersionPrefix>0.0.2</VersionPrefix>
+    <ApplicationIcon>cat-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="github.svg" />
+    <None Remove="Resources\download.svg" />
     <None Remove="Resources\gear.svg" />
     <None Remove="Resources\github.svg" />
+    <None Remove="Resources\globe.svg" />
+    <None Remove="Resources\home.svg" />
+    <None Remove="Resources\reply.svg" />
+    <None Remove="Resources\search.svg" />
+    <None Remove="Resources\send.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,11 +27,24 @@
     <PackageReference Include="MaterialDesignColors" Version="2.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.0" />
+    <PackageReference Include="Usenet" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\download.svg" />
     <Resource Include="Resources\gear.svg" />
     <Resource Include="Resources\github.svg" />
+    <Resource Include="Resources\globe.svg" />
+    <Resource Include="Resources\home.svg" />
+    <Resource Include="Resources\reply.svg" />
+    <Resource Include="Resources\search.svg" />
+    <Resource Include="Resources\send.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NewsgroupCategories.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

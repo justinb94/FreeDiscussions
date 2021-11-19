@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,18 +14,17 @@ namespace FreeDiscussions.Client.UI
 	/// </summary>
 	public partial class SettingsPanel : Panel
     {
-        private readonly string settingsPath = System.IO.Path.Combine(Environment.CurrentDirectory, "settings.json");
         public SettingsModel settings = new SettingsModel { Hostname = "", Port = 119, SSL = false };
         public SecureString Password { get; set; }
 
         public SettingsPanel(Action onClose) : base(onClose)
         {
             InitializeComponent();
-			if (File.Exists(settingsPath))
+			if (File.Exists(SettingsModel.SettingsPath))
 			{
 				try
 				{
-					this.settings = SettingsModel.Read(settingsPath);
+					this.settings = SettingsModel.Read();
 
 					var login = SettingsModel.GetCredentials();
 					if (login != null)
@@ -36,7 +36,7 @@ namespace FreeDiscussions.Client.UI
 				}
 				catch { }
 
-				this.settings.Save(settingsPath);
+				this.settings.Save();
 			}
 
 			this.DataContext = settings;
@@ -50,15 +50,20 @@ namespace FreeDiscussions.Client.UI
 
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			// TODO: Check connection
-			SettingsModel.SetCredentials(this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password);
-			string json = JsonConvert.SerializeObject(this.settings, Formatting.Indented);
-			File.WriteAllText(settingsPath, json);
-			this.onClose();
+			_ = SaveSettings();
 		}
 
-		private void CancelButton_Click(object sender, RoutedEventArgs e)
+		private async Task SaveSettings()
 		{
+			if (!await ConnectionManager.CheckConnection(this.settings.Hostname, this.settings.Port, this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password, this.settings.SSL))
+			{
+				MessageBox.Show("Can't connect, please check your settings.");
+				return;
+			}
+
+			SettingsModel.SetCredentials(this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password);
+			string json = JsonConvert.SerializeObject(this.settings, Formatting.Indented);
+			File.WriteAllText(SettingsModel.SettingsPath, json);
 			this.onClose();
 		}
 

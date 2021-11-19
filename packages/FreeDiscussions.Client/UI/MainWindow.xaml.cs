@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace FreeDiscussions.Client.UI
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IUIManager
     {
         // import some functions for the custom window
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -24,6 +24,32 @@ namespace FreeDiscussions.Client.UI
         public MainWindow()
         {
             InitializeComponent();
+
+            // initalize UIManager Singleton
+            new UIManager(this);
+
+            // add home tab
+            var s = new ObservableCollection<TabItemModel>();
+            s.Add(new TabItemModel
+            {
+                HeaderText = "Home",
+                HeaderImage = "/FreeDiscussions.Client;component/Resources/home.svg",
+                Control = new NewsgroupsPanel(() =>
+                {
+                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Home").FirstOrDefault()));
+                }),
+                Close = new DelegateCommand<string>((s) =>
+                {
+                    var _s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
+                    var newSource = _s.Where(x => x.HeaderText != "Home").ToArray();
+                    MainPanel.ItemsSource = newSource;
+                    MainPanel.SelectedIndex = _s.Count - 1;
+                })
+            });
+            SidebarPanel.ItemsSource = s;
+
+            MainPanel.ItemsSource = new ObservableCollection<TabItemModel>();
+            // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -77,7 +103,7 @@ namespace FreeDiscussions.Client.UI
             }
 
             // check if settings panel is already open
-            var current = s.Select((x, i) => new { Index = i }).FirstOrDefault();
+            var current = s.Select((x, i) => new { Index = i, Item= x }).Where(x => x.Item.HeaderText == "Settings").FirstOrDefault();
             if (current != null)
             {
                 // select settings panel
@@ -94,15 +120,46 @@ namespace FreeDiscussions.Client.UI
                 {
                     s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Settings").FirstOrDefault()));
                 }),
-                Close = new DelegateCommand<string>((s) =>
+                Close = new DelegateCommand<string>((n) =>
                 {
-                    var _s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
-                    var newSource = _s.Where(x => x.HeaderText != "Settings").ToArray();
-                    MainPanel.ItemsSource = newSource;
-                    MainPanel.SelectedIndex = _s.Count - 1;
+                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Settings").FirstOrDefault()));
                 })
             });
 
+            MainPanel.ItemsSource = s;
+            MainPanel.SelectedIndex = s.Count - 1;
+        }
+
+        public void OpenOrSelectNewsgroup(string name)
+        {
+            var s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
+            if (s == null)
+            {
+                s = new ObservableCollection<TabItemModel>();
+            }
+
+            // check if panel already exists
+            if (s.Any(x => x.HeaderText == name))
+            {
+                var i = s.Select((x, i) => new { Item = x, Index = i }).Where(x => x.Item.HeaderText == name).First();
+                MainPanel.SelectedIndex = i.Index;
+                return;
+            }
+
+            // add panel
+            s.Add(new TabItemModel
+            {
+                HeaderText = name,
+                HeaderImage = "/FreeDiscussions.Client;component/Resources/globe.svg",
+                Control = new NewsgroupsContentPanel(name, () =>
+                {
+                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == name).FirstOrDefault()));
+                }),
+                Close = new DelegateCommand<string>((n) =>
+                {
+                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == name).FirstOrDefault()));
+                })
+            });
             MainPanel.ItemsSource = s;
             MainPanel.SelectedIndex = s.Count - 1;
         }
