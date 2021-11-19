@@ -16,18 +16,17 @@ namespace FreeDiscussions.Client.UI
 	/// </summary>
 	public partial class SettingsPanel : Panel
     {
-        private readonly string settingsPath = System.IO.Path.Combine(Environment.CurrentDirectory, "settings.json");
         public SettingsModel settings = new SettingsModel { Hostname = "", Port = 119, SSL = false };
         public SecureString Password { get; set; }
 
         public SettingsPanel(Action onClose) : base(onClose)
         {
             InitializeComponent();
-			if (File.Exists(settingsPath))
+			if (File.Exists(SettingsModel.SettingsPath))
 			{
 				try
 				{
-					this.settings = SettingsModel.Read(settingsPath);
+					this.settings = SettingsModel.Read();
 
 					var login = SettingsModel.GetCredentials();
 					if (login != null)
@@ -39,7 +38,7 @@ namespace FreeDiscussions.Client.UI
 				}
 				catch { }
 
-				this.settings.Save(settingsPath);
+				this.settings.Save();
 			}
 
 			this.DataContext = settings;
@@ -66,7 +65,7 @@ namespace FreeDiscussions.Client.UI
 
 			SettingsModel.SetCredentials(this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password);
 			string json = JsonConvert.SerializeObject(this.settings, Formatting.Indented);
-			File.WriteAllText(settingsPath, json);
+			File.WriteAllText(SettingsModel.SettingsPath, json);
 			this.onClose();
 		}
 

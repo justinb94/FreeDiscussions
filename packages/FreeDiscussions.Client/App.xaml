@@ -90,11 +90,12 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Border x:Name="Border" Background="{TemplateBinding Background}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#0098DD" TargetName="Border" />
+                                            <Setter Property="TextBlock.Foreground" Value="#0098DD" TargetName="Border" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

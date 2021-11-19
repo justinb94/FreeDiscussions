@@ -1,5 +1,6 @@
 ﻿using CredentialManagement;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace FreeDiscussions.Client.Models
@@ -11,17 +12,19 @@ namespace FreeDiscussions.Client.Models
 		public bool SSL { get; set; }
 		public string DownloadFolder { get; set; }
 
+		public static readonly string SettingsPath = System.IO.Path.Combine(Environment.CurrentDirectory, "settings.json");
+
 
 		private const string target = "UsenetClientCredentials";
 
-		public void Save(string filename)
+		public void Save()
 		{
 			string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-			File.WriteAllText(filename, json);
+			File.WriteAllText(SettingsPath, json);
 		}
-		public static SettingsModel Read(string filename)
+		public static SettingsModel Read()
 		{
-			var content = File.ReadAllText(filename);
+			var content = File.ReadAllText(SettingsPath);
 			return JsonConvert.DeserializeObject<SettingsModel>(content);
 		}
 
