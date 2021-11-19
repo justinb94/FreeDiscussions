@@ -11,8 +11,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
 
         <ListBox Grid.Row="0" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
@@ -24,51 +24,79 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <!--<svg1:SVGImage Grid.Column="0"  Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="18" Width="18" Margin="0 3"/>-->
-                        <TextBlock Margin="3 0" Grid.Column="1" Foreground="#CFD8DB" FontWeight="SemiBold" FontSize="12" Text="{Binding Subject}"/>
+                        <TextBlock Margin="3 0" Grid.Column="1" FontWeight="SemiBold" FontSize="12" Text="{Binding Subject}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <StackPanel.Background>
-                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-            </StackPanel.Background>
-            <Button Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="0 0">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-                </Button.Background>
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="14" Width="14" Margin="3 0"/>
-                        <TextBlock Margin="0 -2 6 0" Text="Reply">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush Color="{StaticResource SecondaryText}"/>
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </StackPanel>
-                </Button.Content>
-            </Button>
-            <Button Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-                </Button.Background>
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/download.svg" Margin="3 -3 0 0" Height="14" Width="14"/>
-                        <TextBlock Margin="0 -2 6 0" Text="Download">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush Color="{StaticResource SecondaryText}"/>
-                            </TextBlock.Foreground>
-                        </TextBlock>
-                    </StackPanel>
-                </Button.Content>
-            </Button>
-        </StackPanel>
+        <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Background="Transparent"/>
 
-        <Border Grid.Row="2" Background="WhiteSmoke">
-            <TextBlock Name="ArticleBody" Margin="3" FontSize="11" TextWrapping="WrapWithOverflow"/>
-        </Border>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.Background>
+                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+            </Grid.Background>
+            
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 3 0 0">
+                <!--<StackPanel.Background>
+                    <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                </StackPanel.Background>-->
+                <Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                    </Button.Background>
+                    <Button.Content>
+                        <Border Padding="3">
+                            <StackPanel Orientation="Horizontal">
+                                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="14" Width="14" Margin="3 0"/>
+                                <TextBlock Margin="0 -2 6 0" Text="Reply">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Button.Content>
+                </Button>
+                <Button x:Name="DownloadButton" Click="DownloadButton_Click" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                    </Button.Background>
+                    <Button.Content>
+                        <Border Padding="3">
+                            <StackPanel Orientation="Horizontal">
+                                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/download.svg" Margin="3 -3 0 0" Height="14" Width="14"/>
+                                <TextBlock Margin="0 -2 6 0" Text="Download">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </StackPanel>
+
+                        </Border>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+            
+            <Border Grid.Row="1">
+                <TextBlock Name="ArticleBody" Padding="6" FontSize="11" TextWrapping="WrapWithOverflow">
+                    <TextBlock.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                    </TextBlock.Background>
+                </TextBlock>
+            </Border>
+        </Grid>
+
+
     </Grid>
 
 </local:Panel>    
