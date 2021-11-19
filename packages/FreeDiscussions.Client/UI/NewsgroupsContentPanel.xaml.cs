@@ -76,7 +76,9 @@ namespace FreeDiscussions.Client.UI
                                 {
                                     DownloadButton.Visibility = System.Windows.Visibility.Visible;
                                     ArticleBody.Text = "This is a binary. Press Download to save on disk.";
+                                    ArticleGridToolbarRow.Height = new System.Windows.GridLength(28);
                                     ArticleContentRow.Height = new System.Windows.GridLength(280);
+                                    Splitter.Visibility = System.Windows.Visibility.Visible;
                                 });
                         }
                     }
@@ -87,7 +89,9 @@ namespace FreeDiscussions.Client.UI
                         this.Dispatcher.Invoke(() =>
                         {
                             ArticleBody.Text = text;
+                            ArticleGridToolbarRow.Height = new System.Windows.GridLength(0);
                             ArticleContentRow.Height = new System.Windows.GridLength(280);
+                            Splitter.Visibility = System.Windows.Visibility.Visible;
                         });
 
                         // try uuencode 
@@ -248,6 +252,12 @@ namespace FreeDiscussions.Client.UI
             {
                 client.Quit();
             }
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            PostWindow w = new PostWindow(SelectedNewsgroup);
+            w.ShowDialog();
         }
     }
 }

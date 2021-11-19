@@ -10,12 +10,36 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="28"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="8"/>
+            <RowDefinition Height="3"/>
             <RowDefinition Height="0" x:Name="ArticleContentRow"/>
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="0" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 3 0 0">
+            <!--<StackPanel.Background>
+                    <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                </StackPanel.Background>-->
+            <Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0" Click="Button_Click">
+                <Button.Background>
+                    <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+                </Button.Background>
+                <Button.Content>
+                    <Border Padding="3">
+                        <StackPanel Orientation="Horizontal">
+                            <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/send.svg" Height="14" Width="14" Margin="3 0"/>
+                            <TextBlock Margin="0 -2 6 0" Text="New Message...">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+
+        <ListBox Grid.Row="1" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,1" Background="Transparent">
@@ -40,11 +64,15 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter x:Name="Splitter" HorizontalAlignment="Stretch" Grid.Row="1" Background="Transparent"/>
+        <GridSplitter x:Name="Splitter" HorizontalAlignment="Stretch" Grid.Row="2" Visibility="Hidden">
+            <GridSplitter.Background>
+                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
+            </GridSplitter.Background>
+        </GridSplitter>
 
-        <Grid Grid.Row="2" x:Name="ArticleGrid">
+        <Grid Grid.Row="3" x:Name="ArticleGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="28"/>
+                <RowDefinition Height="0" x:Name="ArticleGridToolbarRow"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -52,11 +80,11 @@
                 <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
             </Grid.Background>
             
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 3 0 0">
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 0 0 0">
                 <!--<StackPanel.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                 </StackPanel.Background>-->
-                <Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0">
+                <!--<Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                     </Button.Background>
@@ -72,7 +100,7 @@
                             </StackPanel>
                         </Border>
                     </Button.Content>
-                </Button>
+                </Button>-->
                 <Button x:Name="DownloadButton" Click="DownloadButton_Click" Visibility="Hidden" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>

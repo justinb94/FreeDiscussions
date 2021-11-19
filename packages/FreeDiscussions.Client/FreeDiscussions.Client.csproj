@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <VersionPrefix>0.0.2</VersionPrefix>
+    <ApplicationIcon>cat-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
     <None Remove="Resources\home.svg" />
     <None Remove="Resources\reply.svg" />
     <None Remove="Resources\search.svg" />
+    <None Remove="Resources\send.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +38,7 @@
     <Resource Include="Resources\home.svg" />
     <Resource Include="Resources\reply.svg" />
     <Resource Include="Resources\search.svg" />
+    <Resource Include="Resources\send.svg" />
   </ItemGroup>
 
   <ItemGroup>
