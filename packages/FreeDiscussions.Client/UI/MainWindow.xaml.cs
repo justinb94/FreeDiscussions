@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,6 +51,19 @@ namespace FreeDiscussions.Client.UI
 
             MainPanel.ItemsSource = new ObservableCollection<TabItemModel>();
             // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
+
+            _ = CheckConnectionOrShowSettingsPanel();
+        }
+
+        private async Task CheckConnectionOrShowSettingsPanel()
+        {
+            var settings = SettingsModel.Read();
+            var credentials = SettingsModel.GetCredentials();
+
+            if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
+            {
+                ShowSettingsPanel();
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

@@ -132,7 +132,16 @@
             </Border>
         </Grid>
 
-
+        <Grid Visibility="Hidden" x:Name="StatusMessageGrid" Grid.Row="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Background>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
+            </Grid.Background>
+            <TextBlock x:Name="StatusMessage" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+        </Grid>
     </Grid>
 
 </local:Panel>    
