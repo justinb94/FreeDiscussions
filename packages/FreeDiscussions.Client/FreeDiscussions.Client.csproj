@@ -36,6 +36,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\download.svg" />
     <Resource Include="Resources\gear.svg" />
     <Resource Include="Resources\github.svg" />
