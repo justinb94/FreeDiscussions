@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,6 +15,8 @@ namespace FreeDiscussions.Client.UI
         {
             this._control = control;
             UIManager.Instance = this;
+
+            Log.Information("UIManager initialized");
         }
 
         public void OpenOrSelectNewsgroup(string name)

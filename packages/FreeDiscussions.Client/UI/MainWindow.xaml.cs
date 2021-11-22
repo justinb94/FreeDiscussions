@@ -1,4 +1,6 @@
 ﻿using FreeDiscussions.Client.Models;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -25,6 +27,18 @@ namespace FreeDiscussions.Client.UI
         public MainWindow()
         {
             InitializeComponent();
+
+            // initialize logger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("log_.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            var factory = new LoggerFactory();
+            factory.AddSerilog();
+            Usenet.Logger.Factory = factory;
+            
 
             // initalize UIManager Singleton
             new UIManager(this);
@@ -57,13 +71,18 @@ namespace FreeDiscussions.Client.UI
 
         private async Task CheckConnectionOrShowSettingsPanel()
         {
+            Log.Information("Checking connection...");
             var settings = SettingsModel.Read();
             var credentials = SettingsModel.GetCredentials();
 
             if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
             {
+                Log.Information("Connection not successful. Showing Settings panel");
                 ShowSettingsPanel();
+                return;
             }
+
+            Log.Information("Connection successful.");
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

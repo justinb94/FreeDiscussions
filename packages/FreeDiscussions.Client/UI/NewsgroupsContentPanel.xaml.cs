@@ -1,6 +1,7 @@
 ﻿using FreeDiscussions.Client.Factory;
 using FreeDiscussions.Client.Models;
 using Ookii.Dialogs.Wpf;
+using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -137,9 +138,7 @@ namespace FreeDiscussions.Client.UI
 
         private async Task LoadNewsgroup()
         {
-            var credentials = SettingsModel.GetCredentials();
-            var settings = SettingsModel.Read();
-
+            Log.Information("LoadNewsgroup...");
             var client = await ConnectionManager.GetClient();
             try
             {
