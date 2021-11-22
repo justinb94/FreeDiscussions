@@ -35,6 +35,8 @@ namespace FreeDiscussions.Client
 
 		public static async Task<NntpClient> GetClient()
 		{
+			Log.Information("GetClient");
+
 			var settings = SettingsModel.Read();
 			var login = SettingsModel.GetCredentials();
 
