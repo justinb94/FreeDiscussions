@@ -169,6 +169,10 @@ namespace FreeDiscussions.Client.UI
 
                 Task task = Task.Run(() => GetFirst());
             }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Error LoadNewsgroup");
+            }
             finally
             {
                 client.Quit();
