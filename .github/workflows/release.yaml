@@ -45,7 +45,7 @@ jobs:
           type: 'zip'
           filename: 'FreeDiscussions.Client-${{steps.get-version.outputs.version-prefix}}.zip'
           directory: ./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1
-          exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json *.deps.json'      
+          exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json'      
 
       - name: "Client: Upload Release ZIP"
         uses: ncipollo/release-action@v1
