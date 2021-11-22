@@ -66,17 +66,20 @@ namespace FreeDiscussions.Client.UI
             // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
 
             Task task = Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
-            CheckConnectionOrShowSettingsPanel().GetAwaiter().GetResult();
         }
 
         private async Task CheckConnectionOrShowSettingsPanel()
         {
+            Log.Information("CheckConnectionOrShowSettingsPanel...");
             var settings = SettingsModel.Read();
             var credentials = SettingsModel.GetCredentials();
 
             if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
             {
-                ShowSettingsPanel();
+                this.Dispatcher.Invoke(() =>
+                {
+                    ShowSettingsPanel();
+                });
             }
         }
 
