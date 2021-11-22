@@ -71,18 +71,13 @@ namespace FreeDiscussions.Client.UI
 
         private async Task CheckConnectionOrShowSettingsPanel()
         {
-            Log.Information("Checking connection...");
             var settings = SettingsModel.Read();
             var credentials = SettingsModel.GetCredentials();
 
             if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
             {
-                Log.Information("Connection not successful. Showing Settings panel");
                 ShowSettingsPanel();
-                return;
             }
-
-            Log.Information("Connection successful.");
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
