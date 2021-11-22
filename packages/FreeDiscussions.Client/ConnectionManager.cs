@@ -1,4 +1,5 @@
 ﻿using FreeDiscussions.Client.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,17 +13,22 @@ namespace FreeDiscussions.Client
 
 		public static async Task<bool> CheckConnection(string host, int port, string userName, string password, bool useSSL)
 		{
+			Log.Information("CheckConnection...");
+
 			var client = new NntpClient(new NntpConnection());
 			try
 			{
 				await client.ConnectAsync(host, port, useSSL);
 				client.Authenticate(userName, password);
 				client.Quit();
+
+				Log.Information("CheckConnection succesful...");
 				return true;
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(ex);
+				Log.Error(ex, "CheckConnection failed...");
 			}
 			return false;
 		}
