@@ -44,8 +44,12 @@ namespace FreeDiscussions.Client.UI
 
         private async Task LoadMessage(ArticleModel article)
         {
-            ArticleBody.Text = "Loading...";
-            DownloadButton.Visibility = System.Windows.Visibility.Hidden;
+            this.Dispatcher.Invoke(() =>
+            {
+                ArticleBody.Text = "Loading...";
+                DownloadButton.Visibility = System.Windows.Visibility.Hidden;
+            });
+
 
             SelectedArticle = article;
 
@@ -201,7 +205,7 @@ namespace FreeDiscussions.Client.UI
                         articles.Add(ArticleFactory.GetArticle(a));
                     } else
                     {
-                        Log.Information($"Error receiving article {a.Article.MessageId}, StatusCode: {a.Code}");
+                        Log.Information($"Error receiving article, StatusCode: {a.Code}");
                     }
 
                     e++;
