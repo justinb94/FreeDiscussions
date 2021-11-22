@@ -38,7 +38,7 @@ namespace FreeDiscussions.Client.UI
             var factory = new LoggerFactory();
             factory.AddSerilog();
             Usenet.Logger.Factory = factory;
-            
+
 
             // initalize UIManager Singleton
             new UIManager(this);
@@ -66,7 +66,7 @@ namespace FreeDiscussions.Client.UI
             MainPanel.ItemsSource = new ObservableCollection<TabItemModel>();
             // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
 
-            _ = CheckConnectionOrShowSettingsPanel();
+            Task task = Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
         }
 
         private async Task CheckConnectionOrShowSettingsPanel()
