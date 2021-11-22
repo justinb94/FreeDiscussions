@@ -148,6 +148,7 @@ namespace FreeDiscussions.Client.UI
                 var group = client.Group(SelectedNewsgroup);
                 Log.Information("Group selected");
 
+                Log.Information("Invoke creating a DispatchTimer");
                 this.Dispatcher.Invoke(() =>
                 {
                     Log.Information("Create DispatchTimer");
@@ -158,6 +159,7 @@ namespace FreeDiscussions.Client.UI
                     Log.Information("DispatchTimer started");
                 });
 
+                Log.Information("Clear articles");
                 articles.Clear();
 
                 SelectedGroupHigh = group.Group.HighWaterMark;
@@ -215,6 +217,8 @@ namespace FreeDiscussions.Client.UI
 
         protected void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            Log.Information("dispatcherTimer_Tick");
+
             NewsgroupContentListBox.ItemsSource = articles;
         }
 
