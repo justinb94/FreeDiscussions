@@ -141,17 +141,21 @@ namespace FreeDiscussions.Client.UI
         {
             Log.Information("LoadNewsgroup...");
             var client = await ConnectionManager.GetClient();
+            Log.Information("Got a client.");
             try
             {
-
+                Log.Information("Select group");
                 var group = client.Group(SelectedNewsgroup);
+                Log.Information("Group selected");
 
                 this.Dispatcher.Invoke(() =>
                 {
+                    Log.Information("Create DispatchTimer");
                     DispatcherTimer dispatcherTimer = new DispatcherTimer();
                     dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
                     dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
                     dispatcherTimer.Start();
+                    Log.Information("DispatchTimer started");
                 });
 
                 articles.Clear();
