@@ -24,6 +24,12 @@ namespace FreeDiscussions.Client.Models
 		}
 		public static SettingsModel Read()
 		{
+			if (!File.Exists(SettingsPath))
+			{
+				// create empty settings file
+				string json = JsonConvert.SerializeObject(new SettingsModel(), Formatting.Indented);
+				File.WriteAllText(SettingsPath, json);
+			}
 			var content = File.ReadAllText(SettingsPath);
 			return JsonConvert.DeserializeObject<SettingsModel>(content);
 		}

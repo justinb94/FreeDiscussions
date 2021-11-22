@@ -31,14 +31,15 @@ namespace FreeDiscussions.Client.UI
         {
             InitializeComponent();
             SelectedNewsgroup = newsgroup;
-            LoadNewsgroup();
+            BindingOperations.EnableCollectionSynchronization(articles, _syncLock);
+            Task task = Task.Run(async () => await LoadNewsgroup());
         }
 
         private void NewsgroupContentListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
 
-            _ = LoadMessage(e.AddedItems[0] as ArticleModel);
+            Task task = Task.Run(async () => await LoadMessage(e.AddedItems[0] as ArticleModel));
         }
 
         private async Task LoadMessage(ArticleModel article)
@@ -145,18 +146,20 @@ namespace FreeDiscussions.Client.UI
 
                 var group = client.Group(SelectedNewsgroup);
 
-                DispatcherTimer dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-                dispatcherTimer.Start();
+                this.Dispatcher.Invoke(() =>
+                {
+                    DispatcherTimer dispatcherTimer = new DispatcherTimer();
+                    dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                    dispatcherTimer.Start();
+                });
 
-                BindingOperations.EnableCollectionSynchronization(articles, _syncLock);
                 articles.Clear();
 
                 SelectedGroupHigh = group.Group.HighWaterMark;
                 SelectedGroupLow = group.Group.LowWaterMark;
 
-                Task.Factory.StartNew(() => GetFirst());
+                Task task = Task.Run(async () => GetFirst());
             }
             finally
             {
@@ -205,7 +208,7 @@ namespace FreeDiscussions.Client.UI
 
         private void DownloadButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            _ = DownloadSelected();
+            Task task = Task.Run(async () => await DownloadSelected());
         }
 
         private async Task DownloadSelected()
