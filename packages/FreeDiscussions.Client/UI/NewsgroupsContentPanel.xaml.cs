@@ -159,7 +159,7 @@ namespace FreeDiscussions.Client.UI
                 SelectedGroupHigh = group.Group.HighWaterMark;
                 SelectedGroupLow = group.Group.LowWaterMark;
 
-                Task task = Task.Run(async () => GetFirst());
+                Task task = Task.Run(() => GetFirst());
             }
             finally
             {
@@ -169,6 +169,8 @@ namespace FreeDiscussions.Client.UI
 
         async Task GetFirst()
         {
+            Log.Information("GetFirst");
+
             var credentials = SettingsModel.GetCredentials();
             var settings = SettingsModel.Read();
             var client = await ConnectionManager.GetClient();
@@ -178,12 +180,19 @@ namespace FreeDiscussions.Client.UI
                 var g = client.Group(SelectedNewsgroup);
 
                 var e = 0;
+
+                Log.Information($"HIGH: {SelectedGroupHigh}, LOW: {SelectedGroupLow}");
+
                 for (var i = SelectedGroupHigh; i != SelectedGroupLow; i--)
                 {
                     var a = client.Head(i);
                     if (a.Code == 221)
                     {
+                        Log.Information($"Received article {a.Article.MessageId}");
                         articles.Add(ArticleFactory.GetArticle(a));
+                    } else
+                    {
+                        Log.Information($"Error receiving article {a.Article.MessageId}, StatusCode: {a.Code}");
                     }
 
                     e++;
