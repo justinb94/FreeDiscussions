@@ -1,4 +1,6 @@
-﻿- Full MVVM
+﻿- Show settings panel if connection failed (on start)
 - Show status on loading messages
+- Full MVVM
 - Add support for UUEncoded messages
 - Validating user input (Post to newsgroup)
+- load more Newsgroup Content (Articles)

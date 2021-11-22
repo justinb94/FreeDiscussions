@@ -13,7 +13,15 @@ namespace FreeDiscussions.Client.Factory
         {
             ArticleModel result = new ArticleModel();
             result.Subject = r.Article.Headers.First(x => x.Key == "Subject").Value.First();
-            result.Date = DateTime.Parse(r.Article.Headers.First(x => x.Key == "Date").Value.First());
+
+            DateTime d;
+            if (DateTime.TryParse(r.Article.Headers.First(x => x.Key == "Date").Value.First(), out d))
+            {
+                result.Date = d;
+            } else
+            {
+                Console.WriteLine(".");
+            }
             result.MessageId = r.Article.MessageId;
             return result;
         }
