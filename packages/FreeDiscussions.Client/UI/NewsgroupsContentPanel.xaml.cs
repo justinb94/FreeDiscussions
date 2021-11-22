@@ -159,6 +159,8 @@ namespace FreeDiscussions.Client.UI
                 SelectedGroupHigh = group.Group.HighWaterMark;
                 SelectedGroupLow = group.Group.LowWaterMark;
 
+                Log.Information($"HIGH: {SelectedGroupHigh}, LOW: {SelectedGroupLow}");
+
                 Task task = Task.Run(() => GetFirst());
             }
             finally
@@ -178,10 +180,7 @@ namespace FreeDiscussions.Client.UI
             {
 
                 var g = client.Group(SelectedNewsgroup);
-
                 var e = 0;
-
-                Log.Information($"HIGH: {SelectedGroupHigh}, LOW: {SelectedGroupLow}");
 
                 for (var i = SelectedGroupHigh; i != SelectedGroupLow; i--)
                 {
