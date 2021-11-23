@@ -67,14 +67,14 @@ namespace FreeDiscussions.Client.UI
 			this.onClose();
 		}
 
-		private void ChoseDownloadFolderButton_Click(object sender, RoutedEventArgs e)
-		{
-			var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-			if (dialog.ShowDialog(this.Parent as Window).GetValueOrDefault())
-			{
-				DownloadFolderTextBox.Text = dialog.SelectedPath;
-				this.settings.DownloadFolder = dialog.SelectedPath;
-			}
-		}
+		//private void ChoseDownloadFolderButton_Click(object sender, RoutedEventArgs e)
+		//{
+		//	var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
+		//	if (dialog.ShowDialog(this.Parent as Window).GetValueOrDefault())
+		//	{
+		//		DownloadFolderTextBox.Text = dialog.SelectedPath;
+		//		this.settings.DownloadFolder = dialog.SelectedPath;
+		//	}
+		//}
 	}
 }
