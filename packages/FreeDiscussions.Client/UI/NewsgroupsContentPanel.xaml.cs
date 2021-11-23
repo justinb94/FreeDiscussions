@@ -81,11 +81,11 @@ namespace FreeDiscussions.Client.UI
                         {
                             this.Dispatcher.Invoke(() =>
                                 {
-                                    DownloadButton.Visibility = System.Windows.Visibility.Visible;
+                                    DownloadButton.Visibility = Visibility.Visible;
                                     ArticleBody.Text = "This is a binary. Press Download to save on disk.";
-                                    ArticleGridToolbarRow.Height = new System.Windows.GridLength(28);
-                                    ArticleContentRow.Height = new System.Windows.GridLength(280);
-                                    Splitter.Visibility = System.Windows.Visibility.Visible;
+                                    ArticleGridToolbarRow.Height = new GridLength(28);
+                                    ArticleContentRow.Height = new GridLength(280);
+                                    Splitter.Visibility = Visibility.Visible;
                                 });
                         }
                     }
@@ -96,9 +96,9 @@ namespace FreeDiscussions.Client.UI
                         this.Dispatcher.Invoke(() =>
                         {
                             ArticleBody.Text = text;
-                            ArticleGridToolbarRow.Height = new System.Windows.GridLength(0);
-                            ArticleContentRow.Height = new System.Windows.GridLength(280);
-                            Splitter.Visibility = System.Windows.Visibility.Visible;
+                            ArticleGridToolbarRow.Height = new GridLength(28);
+                            ArticleContentRow.Height = new GridLength(280);
+                            Splitter.Visibility = Visibility.Visible;
                         });
 
                         // try uuencode 
@@ -306,6 +306,15 @@ namespace FreeDiscussions.Client.UI
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             PostWindow w = new PostWindow(SelectedNewsgroup);
+            w.ShowDialog();
+        }
+
+ 
+        private void ReplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var i = NewsgroupContentListBox.SelectedItem as ArticleModel;
+
+            PostWindow w = new PostWindow(SelectedNewsgroup, i.MessageId, i.Subject, this.ArticleBody.Text);
             w.ShowDialog();
         }
     }

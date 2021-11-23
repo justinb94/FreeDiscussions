@@ -24,6 +24,7 @@ namespace FreeDiscussions.Client.UI
     {
         private readonly string settingsPath = System.IO.Path.Combine(Environment.CurrentDirectory, "settings.json");
         private string targetNewsgroup = "";
+        private string? replyTo;
 
         public PostWindow(string targetNewsgroup)
         {
@@ -38,6 +39,23 @@ namespace FreeDiscussions.Client.UI
                 Email = "my@email.com",
                 Subject = "Subject",
                 Body = "Body"
+            };
+        }
+
+        public PostWindow(string targetNewsgroup, string replyTo, string subject, string body)
+        {
+            InitializeComponent();
+            // Name, E-Mail, Subject, Body
+            this.targetNewsgroup = targetNewsgroup;
+            this.replyTo = replyTo;
+            this.Title = @$"Post to {targetNewsgroup}";
+
+            this.DataContext = new NewMessageModel
+            {
+                Name = "My Name",
+                Email = "my@email.com",
+                Subject = subject,
+                Body = body
             };
         }
 
@@ -56,13 +74,19 @@ namespace FreeDiscussions.Client.UI
 
                 var x = this.DataContext as NewMessageModel;
 
-                NntpArticle newArticle = new NntpArticleBuilder()
+                var builder = new NntpArticleBuilder()
                     .SetMessageId(messageId)
                     .SetFrom(@$"{x.Name} <{x.Email}>")
                     .SetSubject(x.Subject)
                     .AddGroups(this.targetNewsgroup)
-                    .AddLines(x.Body.Split("/n"))
-                    .Build();
+                    .AddLines(x.Body.Split("/n"));
+
+                if (replyTo != null)
+                {
+                    builder.AddHeader("Reply-To", this.replyTo);
+                }
+
+                var newArticle = builder.Build();
 
                 var result = client.Post(newArticle);
                 if (result)
