@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -137,7 +138,11 @@ namespace FreeDiscussions.Client.UI
             }
             finally
             {
-                client.Quit();
+                try
+                {
+                    client.Quit();
+                }
+                catch { }
             }
         }
 
@@ -176,10 +181,28 @@ namespace FreeDiscussions.Client.UI
             catch(Exception ex)
             {
                 Log.Error(ex, "Error LoadNewsgroup");
+
+                var x = await ConnectionManager.CheckConnection();
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (!x)
+                    {
+                        UIManager.Instance.ClosePanel(SelectedNewsgroup);
+                        MessageBox.Show("Can't connect. Please check your settings.");
+                        UIManager.Instance.ShowSettingsPanel();
+                    }
+                });
             }
             finally
             {
-                client.Quit();
+                try
+                {
+                    client.Quit();
+                } 
+                catch
+                {
+                    // if connection failed, Quit will fail as well
+                }
             }
         }
 

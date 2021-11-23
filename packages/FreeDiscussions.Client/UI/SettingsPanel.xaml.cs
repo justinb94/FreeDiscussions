@@ -57,7 +57,7 @@ namespace FreeDiscussions.Client.UI
 		{
 			if (!await ConnectionManager.CheckConnection(this.settings.Hostname, this.settings.Port, this.UsernameTextBox.Text, new System.Net.NetworkCredential(string.Empty, this.Password).Password, this.settings.SSL))
 			{
-				MessageBox.Show("Can't connect, please check your settings.");
+				MessageBox.Show("Can't connect. Please check your settings.");
 				return;
 			}
 

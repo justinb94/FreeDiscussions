@@ -7,26 +7,13 @@ namespace FreeDiscussions.Client.UI
 {
     public class UIManager
     {
-        public static UIManager Instance;
-
-        private IUIManager _control;
-
-        public UIManager(IUIManager control)
-        {
-            this._control = control;
-            UIManager.Instance = this;
-
-            Log.Information("UIManager initialized");
-        }
-
-        public void OpenOrSelectNewsgroup(string name)
-        {
-            this._control.OpenOrSelectNewsgroup(name);
-        }
+        public static IUIManager Instance;
     }
 
     public interface IUIManager
     {
         void OpenOrSelectNewsgroup(string name);
+        void ShowSettingsPanel();
+        void ClosePanel(string name);
     }
 }
