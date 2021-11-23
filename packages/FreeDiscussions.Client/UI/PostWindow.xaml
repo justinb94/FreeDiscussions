@@ -27,7 +27,7 @@
                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
             </TextBox.Foreground>
             <TextBox.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
             </TextBox.Background>
         </TextBox>
 
@@ -38,7 +38,7 @@
                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
             </TextBox.Foreground>
             <TextBox.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
             </TextBox.Background>
         </TextBox>
 
@@ -48,17 +48,19 @@
                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
             </TextBox.Foreground>
             <TextBox.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
             </TextBox.Background>
         </TextBox>
 
         <TextBlock Text="Text:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="0 0 3 0"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Body}" BorderThickness="1" Margin="0 -1 0 0">
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Body}" BorderThickness="1" Margin="0 -1 0 0" 
+                 TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="true" SpellCheck.IsEnabled="True"
+        >
             <TextBox.Foreground>
                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
             </TextBox.Foreground>
             <TextBox.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
             </TextBox.Background>
         </TextBox>
 

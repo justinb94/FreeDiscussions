@@ -40,7 +40,7 @@ namespace FreeDiscussions.Client.UI
             Usenet.Logger.Factory = factory;
 
             // initalize UIManager Singleton
-            new UIManager(this);
+            UIManager.Instance = this;
 
             // add home tab
             var s = new ObservableCollection<TabItemModel>();
@@ -125,7 +125,7 @@ namespace FreeDiscussions.Client.UI
             SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
         }
 
-        private void ShowSettingsPanel()
+        public void ShowSettingsPanel()
         {
             var s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
             if (s == null)
@@ -193,6 +193,15 @@ namespace FreeDiscussions.Client.UI
             });
             MainPanel.ItemsSource = s;
             MainPanel.SelectedIndex = s.Count - 1;
+        }
+
+        public void ClosePanel(string name)
+        {
+            var items = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
+            var panel = items.IndexOf(items.Where(x => x.HeaderText == name).FirstOrDefault());
+            if (panel != -1) { 
+                items.RemoveAt(panel);
+            }
         }
     }
 }

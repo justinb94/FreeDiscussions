@@ -33,6 +33,14 @@ namespace FreeDiscussions.Client
 			return false;
 		}
 
+		public static Task<bool> CheckConnection()
+		{
+			Log.Information("CheckConnection...");
+			var settings = SettingsModel.Read();
+			var login = SettingsModel.GetCredentials();
+			return CheckConnection(settings.Hostname, settings.Port, login.Username, login.Password, settings.SSL);
+		}
+
 		public static async Task<NntpClient> GetClient()
 		{
 			Log.Information("GetClient");

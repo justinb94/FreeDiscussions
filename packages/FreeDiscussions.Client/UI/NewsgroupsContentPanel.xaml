@@ -40,6 +40,15 @@
         </StackPanel>
 
         <ListBox Grid.Row="1" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Reply" Click="ReplyButton_Click">
+                        <MenuItem.Icon>
+                            <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="14" Width="14"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,1" Background="Transparent">
@@ -84,7 +93,7 @@
                 <!--<StackPanel.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                 </StackPanel.Background>-->
-                <!--<Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0">
+                <Button Style="{StaticResource TopButtonStyle}" x:Name="ReplyButton" Click="ReplyButton_Click" Height="24" BorderThickness="0" Margin="0 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                     </Button.Background>
@@ -100,7 +109,7 @@
                             </StackPanel>
                         </Border>
                     </Button.Content>
-                </Button>-->
+                </Button> 
                 <Button x:Name="DownloadButton" Click="DownloadButton_Click" Visibility="Hidden" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>

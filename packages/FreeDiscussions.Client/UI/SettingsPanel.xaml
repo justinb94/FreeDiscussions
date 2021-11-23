@@ -23,7 +23,7 @@
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{StaticResource PrimaryText}"/>
             </TextBlock.Foreground>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+            Please provide your login credentials to access the Usenet.
         </TextBlock>
 
         <Grid Margin="0,12,0,0">
@@ -39,7 +39,7 @@
                 <RowDefinition Height="42"></RowDefinition>
                 <RowDefinition Height="42"></RowDefinition>
                 <RowDefinition Height="24"></RowDefinition>
-                <RowDefinition Height="42"></RowDefinition>
+                <!--<RowDefinition Height="42"></RowDefinition>-->
                 <RowDefinition Height="12"></RowDefinition>
                 <RowDefinition Height="28"></RowDefinition>
             </Grid.RowDefinitions>
@@ -114,7 +114,7 @@
                 </PasswordBox.Foreground>
             </PasswordBox>
 
-            <Label VerticalContentAlignment="Center" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right">
+            <!--<Label VerticalContentAlignment="Center" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right">
                 <Label.Foreground>
                     <SolidColorBrush Color="{StaticResource SecondaryText}"/>
                 </Label.Foreground>
@@ -126,16 +126,16 @@
                 <TextBox.Foreground>
                     <SolidColorBrush Color="{StaticResource SecondaryText}"/>
                 </TextBox.Foreground>
-            </TextBox>
+            </TextBox>-->
 
-            <Button BorderThickness="0" Height="24" Style="{StaticResource TopButtonStyle}" Foreground="White"  Grid.Row="5" Grid.Column="2" Name="ChoseDownloadFolderButton" Content="..." Click="ChoseDownloadFolderButton_Click">
+            <!--<Button BorderThickness="0" Height="24" Style="{StaticResource TopButtonStyle}" Foreground="White"  Grid.Row="5" Grid.Column="2" Name="ChoseDownloadFolderButton" Content="..." Click="ChoseDownloadFolderButton_Click">
                 <Button.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryText}"/>
                 </Button.Background>
-            </Button>
+            </Button>-->
 
 
-            <Button BorderThickness="0" Width="100" HorizontalAlignment="Right" Style="{StaticResource TopButtonStyle}" Foreground="White" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Name="SaveButton" Click="SaveButton_Click" Content="Save">
+            <Button BorderThickness="0" Width="100" HorizontalAlignment="Right" Style="{StaticResource TopButtonStyle}" Foreground="White" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Name="SaveButton" Click="SaveButton_Click" Content="Save">
                 <Button.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryText}"/>
                 </Button.Background>

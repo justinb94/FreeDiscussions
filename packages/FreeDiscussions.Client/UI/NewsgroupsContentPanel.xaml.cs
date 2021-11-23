@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -80,11 +81,11 @@ namespace FreeDiscussions.Client.UI
                         {
                             this.Dispatcher.Invoke(() =>
                                 {
-                                    DownloadButton.Visibility = System.Windows.Visibility.Visible;
+                                    DownloadButton.Visibility = Visibility.Visible;
                                     ArticleBody.Text = "This is a binary. Press Download to save on disk.";
-                                    ArticleGridToolbarRow.Height = new System.Windows.GridLength(28);
-                                    ArticleContentRow.Height = new System.Windows.GridLength(280);
-                                    Splitter.Visibility = System.Windows.Visibility.Visible;
+                                    ArticleGridToolbarRow.Height = new GridLength(28);
+                                    ArticleContentRow.Height = new GridLength(280);
+                                    Splitter.Visibility = Visibility.Visible;
                                 });
                         }
                     }
@@ -95,9 +96,9 @@ namespace FreeDiscussions.Client.UI
                         this.Dispatcher.Invoke(() =>
                         {
                             ArticleBody.Text = text;
-                            ArticleGridToolbarRow.Height = new System.Windows.GridLength(0);
-                            ArticleContentRow.Height = new System.Windows.GridLength(280);
-                            Splitter.Visibility = System.Windows.Visibility.Visible;
+                            ArticleGridToolbarRow.Height = new GridLength(28);
+                            ArticleContentRow.Height = new GridLength(280);
+                            Splitter.Visibility = Visibility.Visible;
                         });
 
                         // try uuencode 
@@ -137,7 +138,11 @@ namespace FreeDiscussions.Client.UI
             }
             finally
             {
-                client.Quit();
+                try
+                {
+                    client.Quit();
+                }
+                catch { }
             }
         }
 
@@ -176,10 +181,28 @@ namespace FreeDiscussions.Client.UI
             catch(Exception ex)
             {
                 Log.Error(ex, "Error LoadNewsgroup");
+
+                var x = await ConnectionManager.CheckConnection();
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (!x)
+                    {
+                        UIManager.Instance.ClosePanel(SelectedNewsgroup);
+                        MessageBox.Show("Can't connect. Please check your settings.");
+                        UIManager.Instance.ShowSettingsPanel();
+                    }
+                });
             }
             finally
             {
-                client.Quit();
+                try
+                {
+                    client.Quit();
+                } 
+                catch
+                {
+                    // if connection failed, Quit will fail as well
+                }
             }
         }
 
@@ -283,6 +306,15 @@ namespace FreeDiscussions.Client.UI
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             PostWindow w = new PostWindow(SelectedNewsgroup);
+            w.ShowDialog();
+        }
+
+ 
+        private void ReplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var i = NewsgroupContentListBox.SelectedItem as ArticleModel;
+
+            PostWindow w = new PostWindow(SelectedNewsgroup, i.MessageId, i.Subject, this.ArticleBody.Text);
             w.ShowDialog();
         }
     }
