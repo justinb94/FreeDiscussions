@@ -1,207 +1,411 @@
-﻿using FreeDiscussions.Client.Models;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Linq;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using FreeDiscussions.Plugin;
+using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace FreeDiscussions.Client.UI
 {
-    public partial class MainWindow : Window, IUIManager
+
+
+    /// <summary>
+    /// Interaction logic for MainWindow2.xaml
+    /// </summary>
+
+    public partial class MainWindow : Window, IUIManager_
     {
         // import some functions for the custom window
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
-
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // initialize logger
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File("log_.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            Context.Instance = new Context
+            {
+                UIManager = this
+            };
 
-            var factory = new LoggerFactory();
-            factory.AddSerilog();
-            Usenet.Logger.Factory = factory;
+            // TODO: load plugins
 
-            // initalize UIManager Singleton
-            UIManager.Instance = this;
+            // create and bind view model
+            this.DataContext = new MainWindowViewModel
+            {
+                CloseButtonClick = new DelegateCommand<object>((o) =>
+                {
+                    this.Close();
+                }),
+                MaximizeButtonClick = new DelegateCommand<object>((o) =>
+                {
+                    this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+                }),
+                MinimizeButtonClick = new DelegateCommand<object>((o) =>
+                {
+                    this.WindowState = WindowState.Minimized;
+                }),
+                GithubButtonClick = new DelegateCommand<object>((o) =>
+                {
+                    var uri = "https://github.com/justinb94/FreeDiscussions";
+                    var psi = new System.Diagnostics.ProcessStartInfo();
+                    psi.UseShellExecute = true;
+                    psi.FileName = uri;
+                    System.Diagnostics.Process.Start(psi);
+                }),
+                WindowDrag = new DelegateCommand<object>((o) =>
+                {
+                    ReleaseCapture();
+                    SendMessage(new WindowInteropHelper(this).Handle, 0xA1, (IntPtr)0x2, (IntPtr)0);
+                }),
+                DotsClicked = new DelegateCommand<object>((sender) =>
+                {
+                    var me = this.DataContext as MainWindowViewModel;
+                    me.ContextMenuVisibility = me.ContextMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+                    me.PluginMenuVisibility = Visibility.Hidden;
+                }),
+                HideContextMenus = new DelegateCommand<object>((sender) =>
+                {
+                    var me = this.DataContext as MainWindowViewModel;
+                    me.ContextMenuVisibility = Visibility.Hidden;
+                    me.PluginMenuVisibility = Visibility.Hidden;
+                }),
+                PuzzleClicked = new DelegateCommand<object>((sender) =>
+                {
+                    var me = this.DataContext as MainWindowViewModel;
+                    me.PluginMenuVisibility = me.PluginMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+                    me.ContextMenuVisibility = Visibility.Hidden;
+                }),
+                HidePluginMenu = new DelegateCommand<object>((sender) =>
+                {
+                    var me = this.DataContext as MainWindowViewModel;
+                    me.PluginMenuVisibility = Visibility.Hidden;
+                }),
+                ContextMenuItems = new List<MainWindowViewModel.ContextMenuItemModel>
+                {
+                    new MainWindowViewModel.ContextMenuItemModel
+                    {
+                        Name = "Settings...",
+                        Click = new DelegateCommand<object>((o) =>
+                        {
+                            Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel("Settings")
+                            {
+                                HeaderText = "Settings",
+                                IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
+                                Control = new SettingsPanel(() => {
+                                    Context.Instance.UIManager.ClosePanel("Settings");
+                                }),
+                                Close = new DelegateCommand<string>((o) =>
+                                {
+                                    Context.Instance.UIManager.ClosePanel("Settings");
+                                })
+                            });
+                        })
+                    },
+                    new MainWindowViewModel.ContextMenuItemModel
+                    {
+                        Name = "About...",
+                        Click = new DelegateCommand<object>((o) =>
+                        {
+                            // TODO: open about window
+                            var me = this.DataContext as MainWindowViewModel;
+                            me.ContextMenuVisibility = Visibility.Hidden;
+                        })
+                    },
+                    new MainWindowViewModel.ContextMenuItemModel
+                    {
+                        Name = "Close",
+                        Click = new DelegateCommand<object>((o) =>
+                        {
+                            this.Close();
+                        }),
+                    }
+                },
+                PluginMenuItems = new List<MainWindowViewModel.PluginMenuItemModel>
+                {
+                    new MainWindowViewModel.PluginMenuItemModel
+                    {
+                        Name = "Home",
+                        IsPinned = true,
+                        IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
+                        Click = new DelegateCommand<object>((o) =>
+                        {
+                            var me = this.DataContext as MainWindowViewModel;
+                            me.ContextMenuVisibility = Visibility.Hidden;
+                            me.PluginMenuVisibility = Visibility.Hidden;
 
-            // add home tab
-            var s = new ObservableCollection<TabItemModel>();
-            s.Add(new TabItemModel
+                            Context.Instance.UIManager.OpenPanel(PanelLocation.Sidebar, new TabItemModel("Home")
+                            {
+                                HeaderText = "Home",
+                                IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
+                                Control = new NewsgroupsPanel(() => { }),
+                            });
+                        })
+                    },
+                },
+                PinPluginClicked = new DelegateCommand<object>((o) =>
+                {
+                    Console.WriteLine(o);
+                }),
+                ContextMenuVisibility = Visibility.Hidden,
+                PluginMenuVisibility = Visibility.Hidden,
+                HideSidebar = new DelegateCommand<object>((o) =>
+                {
+                    this.HideSidebar();
+                }),
+                ShowSidebar = new DelegateCommand<object>((o) =>
+                {
+                    this.ShowSidebar();
+                }),
+            };
+
+            // open home panel on start
+            Context.Instance.UIManager.OpenPanel(PanelLocation.Sidebar, new TabItemModel("Home")
             {
                 HeaderText = "Home",
-                HeaderImage = "/FreeDiscussions.Client;component/Resources/home.svg",
-                Control = new NewsgroupsPanel(() =>
-                {
-                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Home").FirstOrDefault()));
-                }),
-                Close = new DelegateCommand<string>((s) =>
-                {
-                    var _s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
-                    var newSource = _s.Where(x => x.HeaderText != "Home").ToArray();
-                    MainPanel.ItemsSource = newSource;
-                    MainPanel.SelectedIndex = _s.Count - 1;
-                })
+                IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
+                Control = new NewsgroupsPanel(() => { }),
             });
-            SidebarPanel.ItemsSource = s;
-
-            MainPanel.ItemsSource = new ObservableCollection<TabItemModel>();
-            // BottomPanel.ItemsSource = new ObservableCollection<TabItemModel>();
-
-            Task task = Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
         }
 
-        private async Task CheckConnectionOrShowSettingsPanel()
+        public void HideSidebar()
         {
-            Log.Information("CheckConnectionOrShowSettingsPanel...");
-            var settings = SettingsModel.Read();
-            var credentials = SettingsModel.GetCredentials();
+            var vm = this.DataContext as MainWindowViewModel;
+            vm.SidebarVisibility = Visibility.Hidden;
+        }
 
-            if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
+        public void ShowSidebar()
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            vm.SidebarVisibility = Visibility.Visible;
+        }
+
+        public async Task OpenPanel(PanelLocation location, TabItemModel tab)
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            if (location == PanelLocation.Main)
             {
-                this.Dispatcher.Invoke(() =>
+                var currentIndex = vm.MainPanelTabs.Select((item, index) => new { Item = item, Index = index }).Where(x => x.Item.Id == tab.Id).FirstOrDefault();
+                if (currentIndex != null) {
+                    // tab already open
+                    vm.SelectedIndexMainPanel = currentIndex.Index;
+                    vm.OnPropertyChanged("MainPanelTabs");
+                    return;
+                }
+                vm.MainPanelTabs.Add(tab);
+                vm.SelectedIndexMainPanel = vm.MainPanelTabs.Count - 1;
+                vm.OnPropertyChanged("MainPanelTabs");
+            } else
+            {
+                var toggle = false;
+                if (vm.SidebarItem != null && vm.SidebarItem.HeaderText == tab.HeaderText)
                 {
-                    ShowSettingsPanel();
-                });
-            }
-        }
+                    toggle = true;
+                }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-        }
-
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void GithubButton_Click(object sender, RoutedEventArgs e)
-        {
-            var uri = "https://github.com/justinb94/FreeDiscussions";
-            var psi = new System.Diagnostics.ProcessStartInfo();
-            psi.UseShellExecute = true;
-            psi.FileName = uri;
-            System.Diagnostics.Process.Start(psi);
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowSettingsPanel();
-        }
-
-        private void WindowDrag(object sender, MouseButtonEventArgs e) // MouseDown
-        {
-            ReleaseCapture();
-            SendMessage(new WindowInteropHelper(this).Handle,
-                0xA1, (IntPtr)0x2, (IntPtr)0);
-        }
-
-        private void WindowResize(object sender, MouseButtonEventArgs e)
-        {
-            HwndSource hwndSource = PresentationSource.FromVisual((Visual)sender) as HwndSource;
-            SendMessage(hwndSource.Handle, 0x112, (IntPtr)61448, IntPtr.Zero);
-        }
-
-        public void ShowSettingsPanel()
-        {
-            var s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
-            if (s == null)
-            {
-                s = new ObservableCollection<TabItemModel>();
-            }
-
-            // check if settings panel is already open
-            var current = s.Select((x, i) => new { Index = i, Item= x }).Where(x => x.Item.HeaderText == "Settings").FirstOrDefault();
-            if (current != null)
-            {
-                // select settings panel
-                MainPanel.SelectedIndex = current.Index;
-                return;
-            }
-
-            // settings panel is not already open => open it
-            s.Add(new TabItemModel
-            {
-                HeaderText = "Settings",
-                HeaderImage = "/FreeDiscussions.Client;component/Resources/gear.svg",
-                Control = new SettingsPanel(() =>
+                if (toggle)
                 {
-                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Settings").FirstOrDefault()));
-                }),
-                Close = new DelegateCommand<string>((n) =>
-                {
-                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == "Settings").FirstOrDefault()));
-                })
-            });
+                    if (vm.SidebarVisibility == Visibility.Visible)
+                    {
+                        HideSidebar();
+                    }
+                    else
+                    {
+                        ShowSidebar();
+                    }
+                    return;
+                }
 
-            MainPanel.ItemsSource = s;
-            MainPanel.SelectedIndex = s.Count - 1;
+                // open
+                vm.SidebarVisibility = Visibility.Visible;
+                vm.SidebarItem = tab;
+                vm.OnPropertyChanged("SidebarItem");
+                this.SidebarControlContainer.Child = tab.Control;
+                this.ShowSidebar();
+            }
         }
 
-        public void OpenOrSelectNewsgroup(string name)
+        void IUIManager_.UpdatePlugins()
         {
-            var s = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
-            if (s == null)
-            {
-                s = new ObservableCollection<TabItemModel>();
-            }
-
-            // check if panel already exists
-            if (s.Any(x => x.HeaderText == name))
-            {
-                var i = s.Select((x, i) => new { Item = x, Index = i }).Where(x => x.Item.HeaderText == name).First();
-                MainPanel.SelectedIndex = i.Index;
-                return;
-            }
-
-            // add panel
-            s.Add(new TabItemModel
-            {
-                HeaderText = name,
-                HeaderImage = "/FreeDiscussions.Client;component/Resources/globe.svg",
-                Control = new NewsgroupsContentPanel(name, () =>
-                {
-                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == name).FirstOrDefault()));
-                }),
-                Close = new DelegateCommand<string>((n) =>
-                {
-                    s.RemoveAt(s.IndexOf(s.Where(x => x.HeaderText == name).FirstOrDefault()));
-                })
-            });
-            MainPanel.ItemsSource = s;
-            MainPanel.SelectedIndex = s.Count - 1;
+            var vm = this.DataContext as MainWindowViewModel;
+            if (vm == null) return;
+            vm.OnPropertyChanged("PinnedPluginMenuItems");
+            vm.OnPropertyChanged("PluginMenuItems");
         }
 
-        public void ClosePanel(string name)
+        public async Task ClosePanel(string id)
         {
-            var items = MainPanel.ItemsSource as ObservableCollection<TabItemModel>;
-            var panel = items.IndexOf(items.Where(x => x.HeaderText == name).FirstOrDefault());
-            if (panel != -1) { 
-                items.RemoveAt(panel);
+            var vm = this.DataContext as MainWindowViewModel;
+            var controls = new ObservableCollection<TabItemModel>(vm.MainPanelTabs.Where(x => x.Id != id).ToList());
+            vm.MainPanelTabs = controls;
+        }
+    }
+
+    public interface IUIManager_
+    {
+        Task OpenPanel(PanelLocation location, TabItemModel tab);
+        Task ClosePanel(string id);
+        void HideSidebar();
+        void ShowSidebar();
+        void UpdatePlugins();
+    }
+
+    public class MainWindowViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public DelegateCommand<object> CloseButtonClick { get; set; }
+        public DelegateCommand<object> MaximizeButtonClick { get; set; }
+        public DelegateCommand<object> MinimizeButtonClick { get; set; }
+        public DelegateCommand<object> WindowDrag{ get; set; }
+        public DelegateCommand<object> DotsClicked { get; set; }
+        public DelegateCommand<object> GithubButtonClick { get; set; }
+        public DelegateCommand<object> HideContextMenus { get; set; }
+        public DelegateCommand<object> PuzzleClicked { get; set; }
+        public List<ContextMenuItemModel> ContextMenuItems { get; set; }
+        public DelegateCommand<object> PinPluginClicked { get; set; }
+        public TabItemModel SidebarItem { get; set; }
+
+        private ObservableCollection<TabItemModel> _mainPanelTabs = new ObservableCollection<TabItemModel>();
+
+        private int _selectedIndexMainPanel = 0;
+        public int SelectedIndexMainPanel
+        {
+            get
+            {
+                return _selectedIndexMainPanel;
             }
+
+            set
+            {
+                _selectedIndexMainPanel = value;
+                OnPropertyChanged("SelectedIndexMainPanel");
+            }
+        }
+
+        public ObservableCollection<TabItemModel> MainPanelTabs
+    {
+            get
+            {
+                return _mainPanelTabs;
+            }
+
+            set
+            {
+                _mainPanelTabs = value;
+                OnPropertyChanged("MainPanelTabs");
+            }
+        }
+
+        public DelegateCommand<object> HidePluginMenu { get; set; }
+        public List<PluginMenuItemModel> PluginMenuItems { get; set; }
+        public DelegateCommand<object> HideSidebar { get; set; }
+        public DelegateCommand<object> ShowSidebar { get; set; }
+
+        public List<PluginMenuItemModel> PinnedPluginMenuItems
+        {
+            get
+            {
+                return this.PluginMenuItems.Where(x => x.IsPinned).ToList();
+            }
+        }
+
+        private Visibility _pluginMenuVisibility;
+        public Visibility PluginMenuVisibility
+        {
+            get
+            {
+                return _pluginMenuVisibility;
+            }
+
+            set
+            {
+                _pluginMenuVisibility = value;
+                OnPropertyChanged("PluginMenuVisibility");
+            }
+        }
+
+        private Visibility _sidebarVisibility = Visibility.Visible;
+        public Visibility SidebarVisibility
+        {
+            get
+            {
+                return this._sidebarVisibility;
+            }
+            set
+            {
+                this._sidebarVisibility = value;
+                this.OnPropertyChanged("SidebarVisibility");
+            }
+        }
+
+        private Visibility _contextMenuVisibility;
+        public Visibility ContextMenuVisibility
+        {
+            get
+            {
+                return _contextMenuVisibility;
+            }
+
+            set
+            {
+                _contextMenuVisibility = value;
+                OnPropertyChanged("ContextMenuVisibility");
+            }
+        }
+
+        public MainWindowViewModel()
+        {
+            this.MainPanelTabs = new ObservableCollection<TabItemModel>();
+            this.SidebarVisibility = Visibility.Visible;
+        }
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public class ContextMenuItemModel
+        {
+            public string Name { get; set; }
+            public DelegateCommand<object> Click { get; set; }
+        }
+
+        public class PluginMenuItemModel
+        {
+            public string Name { get; set; }
+            public DelegateCommand<object> Click { get; set; }
+
+            private bool _isPinned;
+            public bool IsPinned
+            {
+                get {
+                    return this._isPinned;
+                }
+                set {
+                    this._isPinned = value;
+                    Context.Instance.UIManager.UpdatePlugins();
+                }
+            }
+            public string IconPath { get; set; }
+            public IPlugin Plugin { get; set; }
         }
     }
 }

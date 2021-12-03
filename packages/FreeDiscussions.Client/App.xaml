@@ -4,13 +4,13 @@
              xmlns:local="clr-namespace:FreeDiscussions.Client"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
+             xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
              xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
              StartupUri="UI/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <!-- tell Dragablz tab control to use the Material Design theme -->
             <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignTabablzControlStyle}" />
-
 
             <Style TargetType="{x:Type Thumb}" x:Key="InvisibleThumbStyle">
                 <Setter Property="Background" Value="Transparent" />
@@ -23,31 +23,30 @@
                 </Setter>
             </Style>
 
-            <DataTemplate x:Key="TabItemTemplate" DataType="{x:Type models:TabItemModel}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="22"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                    </Grid.ColumnDefinitions>
-                    <svg1:SVGImage Source="{Binding HeaderImage}" Height="16" Width="16" Margin="0 3"/>
-                    <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
-                    <Thumb Style="{DynamicResource InvisibleThumbStyle}"  dragablz:DragablzItem.IsCustomThumb="True" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <Style x:Key="ListBoxStyle" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border Name="_Border"
+                                Padding="2"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="_Border" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource PrimaryColorSelected_}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-                    <Button Style="{StaticResource TopButtonStyle}" Grid.Column="2" BorderThickness="0" Name="CloseButton" Command="{Binding Close}">
-                        <Button.Background>
-                            <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                        </Button.Background>
-                        <Button.Content>
-                            <TextBlock FontSize="22" Margin="0 -16" Text="×">
-                                <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{StaticResource SecondaryText}"/>
-                                </TextBlock.Foreground>
-                            </TextBlock>
-                        </Button.Content>
-                    </Button>
-                </Grid>
-            </DataTemplate>
+
 
             
             <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
@@ -69,13 +68,12 @@
                         <Setter Property="MinWidth" Value="6" />
                     </Trigger>
                 </Style.Triggers>
-
             </Style>
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.LightBlue.xaml" />
+                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Orange.xaml" />
                     </ResourceDictionary.MergedDictionaries>
 
 
@@ -84,8 +82,22 @@
                     <Color x:Key="PrimaryText">#0098DD</Color>
                     <Color x:Key="SecondaryText">#383A42</Color>
 
+
+                    <Color x:Key="PrimaryBackground_">#FFFFFF</Color>
+                    <Color x:Key="SecondaryBackground_">#F3F4F6</Color>
+                    <Color x:Key="PrimaryColor_">#F1782B</Color>
+                    <Color x:Key="PrimaryColorSelected_">#FFAE7B</Color>
+                    <Color x:Key="SecondaryColor_">#000000</Color>
+                    <Color x:Key="DarkBackground_">#4B5563</Color>
+
+                    <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{StaticResource PrimaryColor_}"/>
+                    <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{StaticResource PrimaryColor_}"/>
+                    <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{StaticResource PrimaryColor_}"/>
+                    <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{StaticResource SecondaryBackground}"/>
+  
+                    
+
                     <Style TargetType="{x:Type Button}" x:Key="TopButtonStyle">
-                        <Setter Property="Foreground" Value="#0CA5E9" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type Button}">
@@ -102,6 +114,110 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
+
+                    <Style TargetType="{x:Type Button}" x:Key="TopButtonStyle_">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#FFAE7B" TargetName="Border" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="{x:Type CheckBox}" x:Key="PinnedCheckbox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type CheckBox}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Height="20" Width="20">
+                                            <svg1:SVGImage x:Name="checkboxImage" Source="/FreeDiscussions.Client;component/Resources/unpinned.svg" Height="16" Width="16"/>
+                                        </Border>
+                                        <ContentPresenter/>
+                                    </StackPanel>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="checkboxImage" Property="Source" Value="/FreeDiscussions.Client;component/Resources/pinned.svg"/>
+                                        </Trigger>
+                                        <!--<MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" Value="True"/>
+                                                <Condition Property="IsChecked" Value="False"/>
+                                            </MultiTrigger.Conditions>
+                                            <Setter TargetName="checkboxImage" Property="Source" Value="hover.png"/>
+                                        </MultiTrigger>-->
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="{x:Type Button}" x:Key="ContextMenuButton">
+                        <Setter Property="OverridesDefaultStyle" Value="True"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Name="border" 
+                                        BorderThickness="0"
+                                        Padding="3 6">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                                        </Border.Background>
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <DataTemplate x:Key="TabItemTemplate" DataType="{x:Type plugin:TabItemModel}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="22"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                            </Grid.ColumnDefinitions>
+
+                            <svg1:SVGImage Source="{Binding IconPath}" Height="16" Width="16" Margin="0 3" OverrideColor="White"/>
+                            <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="3 3 6 0" Text="{Binding HeaderText}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                            
+                            <Thumb Style="{DynamicResource InvisibleThumbStyle}"  dragablz:DragablzItem.IsCustomThumb="True" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+                            <Button Style="{StaticResource TopButtonStyle_}" Grid.Column="2" BorderThickness="0" Name="CloseButton" Command="{Binding Close}">
+                                <Button.Background>
+                                    <SolidColorBrush Color="{StaticResource PrimaryColor_ }"/>
+                                </Button.Background>
+                                <Button.Content>
+                                    <TextBlock FontSize="22" Margin="0 -12" Text="×">
+                                        <TextBlock.Foreground>
+                                            <SolidColorBrush Color="White"/>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
                 </ResourceDictionary>
 
                 <ResourceDictionary>

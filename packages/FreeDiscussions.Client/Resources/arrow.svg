@@ -1,0 +1,6 @@
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.6,0,0,1.6,0,0)">
+    <path d="M5,10a.749.749,0,0,1-.517-.206L.379,5.9A1.257,1.257,0,0,1,.365,4.116L4.482.206A.75.75,0,1,1,5.515,1.294L1.8,4.819a.249.249,0,0,0,0,.362L5.515,8.706A.75.75,0,0,1,5,10Z" fill="#4B5563" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"></path>
+    <path d="M9.249,10a.749.749,0,0,1-.517-.206l-4.1-3.9a1.257,1.257,0,0,1-.014-1.782L8.732.206A.75.75,0,1,1,9.765,1.294L6.053,4.819a.249.249,0,0,0,0,.362L9.765,8.706A.75.75,0,0,1,9.249,10Z" fill="#4B5563" stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"></path>
+  </g>
+</svg>

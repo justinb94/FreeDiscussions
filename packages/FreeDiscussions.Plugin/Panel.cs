@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FreeDiscussions.Plugin;
+using System;
 using System.Windows.Controls;
 
-namespace FreeDiscussions.Client.UI
+namespace FreeDiscussions.Plugin
 {
     public class Panel : UserControl
     {

@@ -22,7 +22,7 @@ namespace FreeDiscussions.Client.UI
     /// <summary>
     /// Interaction logic for NewsgroupsPanel.xaml
     /// </summary>
-    public partial class NewsgroupsPanel : Panel
+    public partial class NewsgroupsPanel : Plugin.Panel
     {
         private ICollectionView _newsgroupFilter;
 
@@ -59,7 +59,18 @@ namespace FreeDiscussions.Client.UI
         {
             if (e.AddedItems.Count == 0) return;
             var newsgroupName = e.AddedItems[0] as string;
-            UIManager.Instance.OpenOrSelectNewsgroup(newsgroupName);
+            Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel(newsgroupName)
+            {
+                HeaderText = newsgroupName,
+                IconPath = "/FreeDiscussions.Client;component/Resources/globe.svg",
+                Control = new NewsgroupsContentPanel(newsgroupName, () => {
+                    Context.Instance.UIManager.ClosePanel(newsgroupName);
+                }),
+                Close = new DelegateCommand<string>((o) =>
+                {
+                    Context.Instance.UIManager.ClosePanel(newsgroupName);
+                })
+            });
         }
     }
 }
