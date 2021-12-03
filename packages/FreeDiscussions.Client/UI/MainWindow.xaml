@@ -7,14 +7,14 @@
         WindowStyle="None"
         ResizeMode="CanResizeWithGrip"
         BorderThickness="0"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FreeDiscussions.Client"
         xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
+        xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
         xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
         mc:Ignorable="d"
+        FontFamily="Roboto"
         Title="MainWindow" Height="800" Width="1200" MinWidth="800" MinHeight="600">
-    <Window.Background>
-        <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-    </Window.Background>
 
     <WindowChrome.WindowChrome>
         <WindowChrome 
@@ -36,163 +36,306 @@
         </ResourceDictionary>
     </Window.Resources>
 
+    <Window.Background>
+        <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+    </Window.Background>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseDown" >
+            <i:InvokeCommandAction Command="{Binding HideContextMenus}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
+            <RowDefinition Height="96"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
- 
-        <Grid.Background>
-            <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-        </Grid.Background>
 
-        <Border Grid.Row="0" MouseDown="WindowDrag">
+        <Border Grid.Row="0">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDown" >
+                    <i:InvokeCommandAction Command="{Binding WindowDrag}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
             <Border.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
             </Border.Background>
-        </Border>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
-            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="GithubButton" Click="GithubButton_Click">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                </Button.Background>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+                <Button Style="{StaticResource TopButtonStyle_}" Height="28" MinWidth="28" BorderThickness="0" Command="{Binding GithubButtonClick}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+                    </Button.Background>
 
-                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/github.svg" Height="18" Width="18" Margin="0 3"/>
-            </Button>
+                    <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/github2.svg" Height="18" Width="18" Margin="0 3"/>
+                </Button>
 
-            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="SettingsButton" Click="SettingsButton_Click">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                </Button.Background>
-                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/gear.svg" Height="18" Width="18" Margin="0 3"/>
-            </Button>
+                <Button Style="{StaticResource TopButtonStyle_}" Height="28" MinWidth="28" BorderThickness="0" Command="{Binding MinimizeButtonClick}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+                    </Button.Background>
 
-            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="MinimizeButton" Click="MinimizeButton_Click">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                </Button.Background>
-
-                <Rectangle
-                    Margin="0 6 0 0"
-                    Width="12"
-                    Height="1"
+                    <Rectangle
+                        Margin="0 6 0 0"
+                        Width="12"
+                        Height="1"
                     >
-                    <Rectangle.Fill>
-                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Button>
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Button>
 
-            <Button Style="{StaticResource TopButtonStyle}" Height="28" MinWidth="28" BorderThickness="0" Name="MaximizeButton" Click="MaximizeButton_Click">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                </Button.Background>
-                <TextBlock Background="Transparent" Text="▭" FontSize="17" FontFamily="Arial">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{StaticResource SecondaryText}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-            </Button>
-
-            <Button Style="{StaticResource TopButtonStyle}" MinWidth="28" Height="28" BorderThickness="0" Name="CloseButton" Click="CloseButton_Click">
-                <Button.Background>
-                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-                </Button.Background>
-                <Button.Content>
-                    <TextBlock FontSize="24" Margin="0 -18" Text="×">
+                <Button Style="{StaticResource TopButtonStyle_}" Height="28" MinWidth="28" BorderThickness="0" Command="{Binding MaximizeButtonClick}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+                    </Button.Background>
+                    <TextBlock Background="Transparent" Text="▭" FontSize="17" FontFamily="Arial">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{StaticResource SecondaryText}"/>
+                            <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
                         </TextBlock.Foreground>
                     </TextBlock>
-                </Button.Content>
-            </Button>
-        </StackPanel>
+                </Button>
 
-        <Border Grid.Row="2">
-            <Border.Background>
-                <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
-            </Border.Background>
+                <Button Style="{StaticResource TopButtonStyle_}" MinWidth="28" Height="28" BorderThickness="0" Command="{Binding CloseButtonClick}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+                    </Button.Background>
+                    <Button.Content>
+                        <TextBlock FontSize="24" Margin="0 -14" Text="×">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
         </Border>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="White">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="340"/>
-                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <dragablz:TabablzControl Name="SidebarPanel"  Grid.Column="0" SelectedIndex="0"  BorderThickness="0"  TabStripPlacement="Left">
-                <dragablz:TabablzControl.HeaderItemTemplate>
-                    <DataTemplate DataType="{x:Type models:TabItemModel}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="28"/>
-                            </Grid.RowDefinitions>
-                            <svg1:SVGImage Source="{Binding HeaderImage}" Height="24" Width="24" Margin="0 3"/>
-                            <TextBlock HorizontalAlignment="Center" Grid.Row="1" Margin="0 3" Text="{Binding HeaderText}"/>
-                        </Grid>
-                    </DataTemplate>
-                </dragablz:TabablzControl.HeaderItemTemplate>
+
+            <Border Grid.Column="0" Padding="18">
+                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/logo_orange.svg" Margin="0,0,-67,-35" />
+                <!--Height="20" Width="20" Margin="12 0 0 0"-->
+            </Border>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 6 0">
+                <ListView ItemsSource="{Binding PinnedPluginMenuItems}" HorizontalAlignment="Stretch" Height="42" BorderThickness="0">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Button Margin="0,-5,0,-5" Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding Click}">
+                                <Button.Background>
+                                    <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                                </Button.Background>
+                                <Button.Content>
+                                    <svg1:SVGImage BorderThickness="0" Source="{Binding IconPath}" Height="24" Width="24"/>
+                                </Button.Content>
+                            </Button>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Border Width="3" Height="42" Margin="6 0 6 0">
+                    <Border.Background>
+                        <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                    </Border.Background>
+                </Border>
+
+                <Button Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding PuzzleClicked}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                    </Button.Background>
+                    <Button.Content>
+                        <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/puzzle.svg" Height="24" Width="24"/>
+                    </Button.Content>
+                </Button>
+                
+                <Button Style="{StaticResource TopButtonStyle_}" MinWidth="32" Height="42" BorderThickness="0" Command="{Binding DotsClicked}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                    </Button.Background>
+                    <Button.Content>
+                        <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/dots.svg" Height="24" Width="16"/>
+                    </Button.Content>
+                </Button>                
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition>
+                    <ColumnDefinition.Style>
+                        <Style TargetType="{x:Type ColumnDefinition}">
+                            <Setter Property="Width" Value="300" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SidebarVisibility}" Value="Hidden">
+                                    <Setter Property="Width" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SidebarVisibility}" Value="Visible">
+                                    <Setter Property="Width" Value="300" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
+                <ColumnDefinition>
+                    <ColumnDefinition.Style>
+                        <Style TargetType="{x:Type ColumnDefinition}">
+                            <Setter Property="Width" Value="300" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SidebarVisibility}" Value="Hidden">
+                                    <Setter Property="Width" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SidebarVisibility}" Value="Visible">
+                                    <Setter Property="Width" Value="3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.Background>
+                    <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                </Grid.Background>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="42"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="42"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <StackPanel.Background>
+                            <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                        </StackPanel.Background>
+                        <svg1:SVGImage Source="{Binding SidebarItem.IconPath}" Height="14" Width="14" Margin="12 0 0 0"/>
+                        <TextBlock FontSize="13" Text="{Binding SidebarItem.HeaderText}" Margin="6 14 0 0"/>
+                    </StackPanel>
+
+                    <Button Style="{StaticResource TopButtonStyle_}" MinWidth="32" Height="42" BorderThickness="0" Grid.Column="1" Command="{Binding HideSidebar}">
+                        <Button.Background>
+                            <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                        </Button.Background>
+                        <Button.Content>
+                            <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/arrow.svg" Height="12" Width="12"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+                <Border Grid.Row="1" x:Name="SidebarControlContainer"/>
+            </Grid>
+
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch">
+                <GridSplitter.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground}"/>
+                </GridSplitter.Background>
+                <GridSplitter.Style>
+                    <Style TargetType="{x:Type GridSplitter}">
+                        <Setter Property="Width" Value="300" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SidebarVisibility}" Value="Hidden">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SidebarVisibility}" Value="Visible">
+                                <Setter Property="IsEnabled" Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GridSplitter.Style>
+            </GridSplitter>
+
+            <dragablz:TabablzControl SelectedIndex="{Binding SelectedIndexMainPanel}" Name="MainPanel" Grid.Column="2" ItemsSource="{Binding MainPanelTabs}" BorderThickness="0"  TabStripPlacement="Top" HeaderItemTemplate="{StaticResource TabItemTemplate}">
+                <dragablz:TabablzControl.Background>
+                    <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                </dragablz:TabablzControl.Background>
                 <dragablz:TabablzControl.ContentTemplate>
-                    <DataTemplate DataType="{x:Type models:TabItemModel}">
+                    <DataTemplate DataType="{x:Type plugin:TabItemModel}">
                         <Grid>
                             <ContentControl Content="{Binding Control}" />
                         </Grid>
                     </DataTemplate>
                 </dragablz:TabablzControl.ContentTemplate>
             </dragablz:TabablzControl>
-
-            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent"/>
-
-            <Border Grid.Column="2">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <!--<RowDefinition Height="8" Name="BottomPanelSplitterRowDefinition"/>
-                        <RowDefinition Height="240" Name="BottomPanelRowDefinition"/>-->
-                    </Grid.RowDefinitions>
-
-
-                    <dragablz:TabablzControl Name="MainPanel"  Grid.Row="0" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" HeaderItemTemplate="{StaticResource TabItemTemplate}">
-                        <dragablz:TabablzControl.ContentTemplate>
-                            <DataTemplate DataType="{x:Type models:TabItemModel}">
-                                <Grid>
-                                    <ContentControl Content="{Binding Control}" />
-                                </Grid>
-                            </DataTemplate>
-                        </dragablz:TabablzControl.ContentTemplate>
-                    </dragablz:TabablzControl>
-
-                    <!--<GridSplitter HorizontalAlignment="Stretch" Background="Transparent" Grid.Row="1"/>
-
-                    <dragablz:TabablzControl Name="BottomPanel"  Grid.Row="1" SelectedIndex="0" BorderThickness="0"  TabStripPlacement="Top" Margin="0,8,0,0" Grid.RowSpan="2">
-                        --><!--<dragablz:TabablzControl.HeaderSuffixContent>
-                        <Button Command="{Binding ...}">+</Button>
-                        </dragablz:TabablzControl.HeaderSuffixContent>--><!--
-                        <dragablz:TabablzControl.HeaderItemTemplate>
-                            <DataTemplate DataType="{x:Type models:TabItemModel}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="22"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Image MaxHeight="18" MaxWidth="16" Grid.Column="0" Source="/text-icon.png" HorizontalAlignment="Left" Stretch="Fill" VerticalAlignment="Bottom" />
-                                    <TextBlock HorizontalAlignment="Center" Grid.Column="1" Margin="0 3" Text="{Binding HeaderText}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </dragablz:TabablzControl.HeaderItemTemplate>
-                        <dragablz:TabablzControl.ContentTemplate>
-                            <DataTemplate DataType="{x:Type models:TabItemModel}">
-                                <Grid>
-                                    <ContentControl Content="{Binding Control}" />
-                                </Grid>
-                            </DataTemplate>
-                        </dragablz:TabablzControl.ContentTemplate>
-                    </dragablz:TabablzControl>-->
-                </Grid>
-            </Border>
         </Grid>
+
+        <Border Visibility="{Binding ContextMenuVisibility}" BorderThickness="2" CornerRadius="4" Grid.Row="1" Grid.RowSpan="2" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 75 12 0">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+            </Border.Background>
+
+            <Border.BorderBrush>
+                <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+            </Border.BorderBrush>
+
+            <ItemsControl  BorderThickness="0" ItemsSource="{Binding ContextMenuItems}" Background="Transparent" Margin="1 1 1 1">
+                 <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource ContextMenuButton}" Command="{Binding Click}">
+                            <TextBlock Text="{Binding Name}" FontWeight="Normal" />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
+        <Border Visibility="{Binding PluginMenuVisibility}" BorderThickness="2" CornerRadius="4" Grid.Row="1" Grid.RowSpan="2" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 75 48 0">
+            <Border.Background>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+            </Border.Background>
+
+            <Border.BorderBrush>
+                <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+            </Border.BorderBrush>
+
+            <ItemsControl ItemsSource="{Binding PluginMenuItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource ContextMenuButton}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="64" Width="*"/>
+                                    <ColumnDefinition Width="42"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Margin="3 2 0 0" FontSize="14" Text="{Binding Name}" FontWeight="Regular"/>
+                                <CheckBox Grid.Column="1" Style="{StaticResource PinnedCheckbox}" IsChecked="{Binding IsPinned}" Content=" "/>
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
+
+
+        <Border Grid.Row="3" Background="White" BorderThickness="0 1 0 0"></Border>
     </Grid>
 </Window>

@@ -1,9 +1,10 @@
-﻿<local:Panel x:Class="FreeDiscussions.Client.UI.SettingsPanel"
+﻿<plugin:Panel x:Class="FreeDiscussions.Client.UI.SettingsPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FreeDiscussions.Client.UI"
+             xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
              mc:Ignorable="d">
     
     <UserControl.Background>
@@ -11,17 +12,9 @@
     </UserControl.Background>
 
     <StackPanel >
-        <TextBlock TextWrapping="Wrap" Padding="12" Text="Settings">
-            <TextBlock.Foreground>
-                <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
-            </TextBlock.Foreground>
-            <TextBlock.Background>
-                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
-            </TextBlock.Background>
-        </TextBlock>
         <TextBlock TextWrapping="Wrap" Padding="12">
             <TextBlock.Foreground>
-                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
+                <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
             </TextBlock.Foreground>
             Please provide your login credentials to access the Usenet.
         </TextBlock>
@@ -135,11 +128,11 @@
             </Button>-->
 
 
-            <Button BorderThickness="0" Width="100" HorizontalAlignment="Right" Style="{StaticResource TopButtonStyle}" Foreground="White" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Name="SaveButton" Click="SaveButton_Click" Content="Save">
+            <Button BorderThickness="0" Width="100" HorizontalAlignment="Right" Style="{StaticResource TopButtonStyle_}" Foreground="White" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Name="SaveButton" Click="SaveButton_Click" Content="Save">
                 <Button.Background>
-                    <SolidColorBrush Color="{StaticResource PrimaryText}"/>
+                    <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
                 </Button.Background>
             </Button>
         </Grid>
     </StackPanel>
-</local:Panel>
+</plugin:Panel>

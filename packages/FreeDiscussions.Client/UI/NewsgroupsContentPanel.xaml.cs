@@ -19,7 +19,7 @@ namespace FreeDiscussions.Client.UI
     /// <summary>
     /// Interaction logic for NewsgroupsContentPanel.xaml
     /// </summary>
-    public partial class NewsgroupsContentPanel : Panel
+    public partial class NewsgroupsContentPanel : Plugin.Panel
     {
         static object _syncLock = new object();
         ObservableCollection<ArticleModel> articles = new ObservableCollection<ArticleModel>();

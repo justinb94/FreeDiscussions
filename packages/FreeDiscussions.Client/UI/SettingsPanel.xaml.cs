@@ -12,7 +12,7 @@ namespace FreeDiscussions.Client.UI
 	/// <summary>
 	/// Interaction logic for UserControl1.xaml
 	/// </summary>
-	public partial class SettingsPanel : Panel
+	public partial class SettingsPanel : Plugin.Panel
     {
         public SettingsModel settings = new SettingsModel { Hostname = "", Port = 119, SSL = false };
         public SecureString Password { get; set; }

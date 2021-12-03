@@ -64,6 +64,14 @@
             </TextBox.Background>
         </TextBox>
 
-        <Button BorderThickness="1" Width="100" HorizontalAlignment="Right"  Grid.Row="4" Grid.Column="1" Content="Post Message" Click="Button_Click" Margin="0 3 3 0"/>
+        <Button Style="{StaticResource TopButtonStyle_}" BorderThickness="1" Width="100" HorizontalAlignment="Right"  Grid.Row="4" Grid.Column="1" Content="Post Message" Click="Button_Click" Margin="0 3 3 0">
+            <Button.Background>
+                <SolidColorBrush Color="{StaticResource PrimaryColor_}"/>
+            </Button.Background>
+
+            <Button.Foreground>
+                <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+            </Button.Foreground>
+        </Button>
     </Grid>
 </Window>

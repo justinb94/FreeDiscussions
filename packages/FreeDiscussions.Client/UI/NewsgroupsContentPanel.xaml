@@ -1,8 +1,9 @@
-﻿<local:Panel x:Class="FreeDiscussions.Client.UI.NewsgroupsContentPanel"
+﻿<plugin:Panel x:Class="FreeDiscussions.Client.UI.NewsgroupsContentPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
              xmlns:local="clr-namespace:FreeDiscussions.Client.UI"
              xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
              mc:Ignorable="d">
@@ -10,7 +11,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="0" x:Name="ArticleContentRow"/>
@@ -20,7 +21,7 @@
             <!--<StackPanel.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                 </StackPanel.Background>-->
-            <Button Style="{StaticResource TopButtonStyle}" Height="24" BorderThickness="0" Margin="0 0" Click="Button_Click">
+            <Button Style="{StaticResource TopButtonStyle_}" Height="28" BorderThickness="0" Margin="0 0" Click="Button_Click">
                 <Button.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                 </Button.Background>
@@ -39,7 +40,7 @@
             </Button>
         </StackPanel>
 
-        <ListBox Grid.Row="1" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
+        <ListBox ItemContainerStyle="{StaticResource ListBoxStyle}" Grid.Row="1" BorderThickness="0" Name="NewsgroupContentListBox" SelectionChanged="NewsgroupContentListBox_SelectionChanged" Background="Transparent" HorizontalContentAlignment="Stretch" SelectionMode="Single">
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Reply" Click="ReplyButton_Click">
@@ -57,13 +58,13 @@
                             <ColumnDefinition Width="200" />
                         </Grid.ColumnDefinitions>
                         <!--<svg1:SVGImage Grid.Column="0"  Source="/FreeDiscussions.Client;component/Resources/reply.svg" Height="18" Width="18" Margin="0 3"/>-->
-                        <TextBlock Margin="3 0" Grid.Column="0" FontWeight="SemiBold" FontSize="12" Text="{Binding Subject}">
+                        <TextBlock Margin="3 0" Grid.Column="0" FontWeight="Normal" FontSize="11" Text="{Binding Subject}">
                             <TextBlock.Foreground>
-                                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
+                                <SolidColorBrush Color="{StaticResource SecondaryColor_}"/>
                             </TextBlock.Foreground>
                         </TextBlock>
 
-                        <TextBlock Margin="3 0" Grid.Column="1" FontWeight="SemiBold" FontSize="12" Text="{Binding Date}">
+                        <TextBlock Margin="3 0" Grid.Column="1" FontWeight="SemiBold" FontSize="11" Text="{Binding Date}">
                             <TextBlock.Foreground>
                                 <SolidColorBrush Color="{StaticResource SecondaryText}"/>
                             </TextBlock.Foreground>
@@ -73,11 +74,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter x:Name="Splitter" HorizontalAlignment="Stretch" Grid.Row="2" Visibility="Hidden">
-            <GridSplitter.Background>
-                <SolidColorBrush Color="{StaticResource PrimaryText}"/>
-            </GridSplitter.Background>
-        </GridSplitter>
+        <GridSplitter x:Name="Splitter" HorizontalAlignment="Stretch" Grid.Row="2" Visibility="Hidden"/>
 
         <Grid Grid.Row="3" x:Name="ArticleGrid">
             <Grid.RowDefinitions>
@@ -93,7 +90,7 @@
                 <!--<StackPanel.Background>
                     <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                 </StackPanel.Background>-->
-                <Button Style="{StaticResource TopButtonStyle}" x:Name="ReplyButton" Click="ReplyButton_Click" Height="24" BorderThickness="0" Margin="0 0">
+                <Button Style="{StaticResource TopButtonStyle_}" Height="28" BorderThickness="0" Margin="0 0" x:Name="ReplyButton" Click="ReplyButton_Click">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                     </Button.Background>
@@ -109,8 +106,8 @@
                             </StackPanel>
                         </Border>
                     </Button.Content>
-                </Button> 
-                <Button x:Name="DownloadButton" Click="DownloadButton_Click" Visibility="Hidden" Style="{StaticResource TopButtonStyle}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
+                </Button>
+                <Button x:Name="DownloadButton" Click="DownloadButton_Click" Visibility="Hidden" Style="{StaticResource TopButtonStyle_}"  Height="24" Padding="3" BorderThickness="0" Margin="1 0">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground}"/>
                     </Button.Background>
@@ -153,5 +150,5 @@
         </Grid>
     </Grid>
 
-</local:Panel>    
+</plugin:Panel>    
 
