@@ -5,19 +5,27 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <VersionPrefix>0.2.1</VersionPrefix>
-    <ApplicationIcon>cat-icon.ico</ApplicationIcon>
+    <ApplicationIcon>app_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="github.svg" />
+    <None Remove="Resources\app_icon.png" />
+    <None Remove="Resources\arrow.svg" />
+    <None Remove="Resources\dots.svg" />
     <None Remove="Resources\download.svg" />
     <None Remove="Resources\gear.svg" />
     <None Remove="Resources\github.svg" />
+    <None Remove="Resources\github2.svg" />
     <None Remove="Resources\globe.svg" />
     <None Remove="Resources\home.svg" />
+    <None Remove="Resources\logo_orange.svg" />
+    <None Remove="Resources\pinned.svg" />
+    <None Remove="Resources\puzzle.svg" />
     <None Remove="Resources\reply.svg" />
     <None Remove="Resources\search.svg" />
     <None Remove="Resources\send.svg" />
+    <None Remove="Resources\unpinned.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +33,9 @@
     <PackageReference Include="DotNetProjects.SVGImage" Version="4.1.97" />
     <PackageReference Include="Dragablz" Version="0.0.3.223" />
     <PackageReference Include="MaterialDesignColors" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.0" />
     <PackageReference Include="Serilog" Version="2.11.0-dev-01371" />
@@ -37,20 +47,36 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FreeDiscussions.Plugin\FreeDiscussions.Plugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\app_icon.png" />
+    <Resource Include="Resources\arrow.svg" />
+    <Resource Include="Resources\dots.svg" />
     <Resource Include="Resources\download.svg" />
     <Resource Include="Resources\gear.svg" />
     <Resource Include="Resources\github.svg" />
+    <Resource Include="Resources\github2.svg" />
     <Resource Include="Resources\globe.svg" />
     <Resource Include="Resources\home.svg" />
+    <Resource Include="Resources\logo_orange.svg" />
+    <Resource Include="Resources\unpinned.svg" />
+    <Resource Include="Resources\puzzle.svg" />
     <Resource Include="Resources\reply.svg" />
     <Resource Include="Resources\search.svg" />
     <Resource Include="Resources\send.svg" />
+    <Resource Include="Resources\pinned.svg" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="NewsgroupCategories.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>
