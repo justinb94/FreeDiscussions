@@ -29,7 +29,7 @@ namespace FreeDiscussions
                 var container = new CompositionContainer(catalog);
                 container.ComposeParts(PluginContainer.Instance);
 
-                // load plugins from "./plugin/MyPlugin" directory
+                // load plugins from "./plugins/MyPlugin" directory
                 foreach (var dir in Directory.GetDirectories(pluginPath))
                 {
                     var countBefore = PluginContainer.Instance.Plugins.Count;
