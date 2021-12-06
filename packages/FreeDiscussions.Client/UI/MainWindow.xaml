@@ -319,7 +319,7 @@
             <ItemsControl ItemsSource="{Binding PluginMenuItems}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Style="{StaticResource ContextMenuButton}">
+                        <Button Style="{StaticResource ContextMenuButton}" Command="{Binding Click}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="64" Width="*"/>
