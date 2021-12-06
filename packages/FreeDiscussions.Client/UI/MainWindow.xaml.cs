@@ -17,6 +17,8 @@ using FreeDiscussions.Plugin;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using FreeDiscussions.Client.Models;
+using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace FreeDiscussions.Client.UI
 {
