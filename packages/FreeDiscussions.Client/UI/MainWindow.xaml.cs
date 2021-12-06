@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using FreeDiscussions.Plugin;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using FreeDiscussions.Client.Models;
 
 namespace FreeDiscussions.Client.UI
 {
@@ -41,6 +42,17 @@ namespace FreeDiscussions.Client.UI
             {
                 UIManager = this
             };
+
+            // initialize logger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("log_.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            var factory = new LoggerFactory();
+            factory.AddSerilog();
+            Usenet.Logger.Factory = factory;
 
             // TODO: load plugins
 
@@ -180,6 +192,33 @@ namespace FreeDiscussions.Client.UI
                 IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
                 Control = new NewsgroupsPanel(() => { }),
             });
+
+            Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
+        }
+
+        private async Task CheckConnectionOrShowSettingsPanel()
+        {
+            var settings = SettingsModel.Read();
+            var credentials = SettingsModel.GetCredentials();
+
+            if (!await ConnectionManager.CheckConnection(settings.Hostname, settings.Port, credentials.Username, credentials.Password, settings.SSL))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel("Settings")
+                    {
+                        HeaderText = "Settings",
+                        IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
+                        Control = new SettingsPanel(() => {
+                            Context.Instance.UIManager.ClosePanel("Settings");
+                        }),
+                        Close = new DelegateCommand<string>((o) =>
+                        {
+                            Context.Instance.UIManager.ClosePanel("Settings");
+                        })
+                    });
+                });
+            }
         }
 
         public void HideSidebar()
