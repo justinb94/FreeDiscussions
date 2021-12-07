@@ -327,7 +327,7 @@ namespace FreeDiscussions.Client.UI
                             Name = plugin.Name,
                             Plugin = plugin,
                             IsPinned = true,
-                            IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
+                            IconPath = plugin.IconPath,
                             Click = new DelegateCommand<object>(async (o) =>
                             {
                                 var me = this.DataContext as MainWindowViewModel;
@@ -335,7 +335,12 @@ namespace FreeDiscussions.Client.UI
                                 me.PluginMenuVisibility = Visibility.Hidden;
 
                                 var c = await plugin.Create();
-                                c.IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg";
+                                c.IconPath = plugin.IconPath;
+                                c.Close = new DelegateCommand<string>((o) =>
+                                {
+                                    Context.Instance.UIManager.ClosePanel(c.Id);
+                                });
+
                                 Context.Instance.UIManager.OpenPanel(plugin.Location, c);
                             })
                         });
