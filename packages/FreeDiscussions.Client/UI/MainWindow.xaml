@@ -326,7 +326,8 @@
                                     <ColumnDefinition Width="42"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Margin="3 2 0 0" FontSize="14" Text="{Binding Name}" FontWeight="Regular"/>
-                                <CheckBox Grid.Column="1" Style="{StaticResource PinnedCheckbox}" IsChecked="{Binding IsPinned}" Content=" "/>
+                                <CheckBox Grid.Column="1" Style="{StaticResource PinnedCheckbox}" IsChecked="{Binding IsPinned}" Content=" ">
+                                </CheckBox>
                             </Grid>
                         </Button>
                     </DataTemplate>
