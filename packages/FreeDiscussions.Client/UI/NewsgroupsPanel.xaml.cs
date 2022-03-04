@@ -1,4 +1,5 @@
-﻿using FreeDiscussions.Client.Models;
+﻿using FreeDiscussions.Plugin;
+using FreeDiscussions.Plugin.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -55,11 +56,27 @@ namespace FreeDiscussions.Client.UI
             view.Filter = p => p.ToString().ToUpper().Contains(FilterNewsgroupsTextBox.Text.ToUpper());
         }
 
-        private void NewsgroupListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void NewsgroupListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
             var newsgroupName = e.AddedItems[0] as string;
-            Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel(newsgroupName)
+
+            var alternativeNewsgroupViews = PluginContainer.Instance.Plugins.Where(x => x.Type == PanelType.NewsgroupView).ToList();
+            if (alternativeNewsgroupViews.Count != 0)
+            {
+                var first = alternativeNewsgroupViews.First();
+                var tabItem = await first.Create(newsgroupName);
+                // we use the first we get here, maybe implement a picker window to present to the user
+                tabItem.Close = new DelegateCommand<string>((o) =>
+                {
+                    Context.Instance.UIManager.ClosePanel(tabItem.HeaderText);
+                });
+
+                 await Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, tabItem);
+                return;
+            }
+
+            await Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel(newsgroupName)
             {
                 HeaderText = newsgroupName,
                 IconPath = "/FreeDiscussions.Client;component/Resources/globe.svg",

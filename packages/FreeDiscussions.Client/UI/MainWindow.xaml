@@ -4,23 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-        WindowStyle="None"
-        ResizeMode="CanResizeWithGrip"
-        BorderThickness="0"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FreeDiscussions.Client"
-        xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
+        xmlns:models="clr-namespace:FreeDiscussions.Plugin.Models;assembly=FreeDiscussions.Plugin"
         xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
         xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
         mc:Ignorable="d"
         FontFamily="Roboto"
+        ResizeMode="CanResizeWithGrip"
+        BorderThickness="0"
+        
         Title="MainWindow" Height="800" Width="1200" MinWidth="800" MinHeight="600">
-
-    <WindowChrome.WindowChrome>
+    <!--WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        BorderThickness="0"-->
+    <!--<WindowChrome.WindowChrome>
         <WindowChrome 
         CaptionHeight="0"
         ResizeBorderThickness="5" />
-    </WindowChrome.WindowChrome>
+    </WindowChrome.WindowChrome>-->
 
     <Window.Resources>
         <ResourceDictionary>
@@ -48,13 +50,13 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="0"/>
             <RowDefinition Height="96"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0">
+        <!--<Border Grid.Row="0">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDown" >
                     <i:InvokeCommandAction Command="{Binding WindowDrag}" />
@@ -114,20 +116,44 @@
                     </Button.Content>
                 </Button>
             </StackPanel>
-        </Border>
+        </Border>-->
 
         <Grid Grid.Row="1" Background="White">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="450"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            
 
-            <Border Grid.Column="0" Padding="18">
-                <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/logo_orange.svg" Margin="0,0,-67,-35" />
-                <!--Height="20" Width="20" Margin="12 0 0 0"-->
-            </Border>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Border Margin="6 0 0 0" Height="70" Width="180">
+                    <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/logo_orange.svg" Margin="0,0,-67,-35" />
+                    <!--Height="20" Width="20" Margin="12 0 0 0"-->
+                </Border>
+                <StackPanel  Grid.Column="1" Margin="90 28 0 0" Orientation="Horizontal">
+                    <TextBlock FontWeight="Regular" FontSize="16">
+                    Framework
+                    </TextBlock>
+                    <TextBlock x:Name="VersionText" Margin="4 0 0 0" FontWeight="Light" FontSize="16">
+                     1.0.0.0
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 6 0">
+                <StackPanel Margin="12 36 0 0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock FontWeight="Regular" FontSize="16" Margin="0 0 42 0">
+                    Unverified Plugins
+                    </TextBlock>
+                    <Border Width="3" Height="42" Margin="6 -36 16 0">
+                        <Border.Background>
+                            <SolidColorBrush Color="{StaticResource SecondaryBackground_}"/>
+                        </Border.Background>
+                    </Border>
+                    <TextBlock FontWeight="Regular" FontSize="16">
+                    Verified Plugins
+                    </TextBlock>
+                </StackPanel>
                 <ListView ItemsSource="{Binding PinnedPluginMenuItems}" HorizontalAlignment="Stretch" Height="42" BorderThickness="0">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
@@ -144,7 +170,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Button Margin="0,-5,0,-5" Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding Click}">
+                            <Button ToolTip="{Binding Tooltip}" Margin="0,-5,0,-5" Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding Click}">
                                 <Button.Background>
                                     <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
                                 </Button.Background>
@@ -307,7 +333,7 @@
             </ItemsControl>
         </Border>
 
-        <Border Visibility="{Binding PluginMenuVisibility}" BorderThickness="2" CornerRadius="4" Grid.Row="1" Grid.RowSpan="2" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 75 48 0">
+        <Border Visibility="{Binding PluginMenuVisibility}" BorderThickness="2" CornerRadius="4" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 75 48 0">
             <Border.Background>
                 <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
             </Border.Background>
@@ -322,7 +348,7 @@
                         <Button Style="{StaticResource ContextMenuButton}" Command="{Binding Click}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="64" Width="*"/>
+                                    <ColumnDefinition MinWidth="120" Width="*"/>
                                     <ColumnDefinition Width="42"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Margin="3 2 0 0" FontSize="14" Text="{Binding Name}" FontWeight="Regular"/>

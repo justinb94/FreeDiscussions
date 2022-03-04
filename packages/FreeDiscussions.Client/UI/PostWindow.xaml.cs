@@ -1,4 +1,5 @@
-﻿using FreeDiscussions.Client.Models;
+﻿using FreeDiscussions.Plugin;
+using FreeDiscussions.Plugin.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

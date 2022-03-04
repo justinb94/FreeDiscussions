@@ -1,5 +1,6 @@
 ﻿using FreeDiscussions.Client.Factory;
-using FreeDiscussions.Client.Models;
+using FreeDiscussions.Plugin;
+using FreeDiscussions.Plugin.Models;
 using Ookii.Dialogs.Wpf;
 using Serilog;
 using System;

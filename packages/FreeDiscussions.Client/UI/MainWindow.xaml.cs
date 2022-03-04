@@ -16,9 +16,9 @@ using System.Windows.Shapes;
 using FreeDiscussions.Plugin;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using FreeDiscussions.Client.Models;
 using Serilog;
 using Microsoft.Extensions.Logging;
+using FreeDiscussions.Plugin.Models;
 
 namespace FreeDiscussions.Client.UI
 {
@@ -116,7 +116,7 @@ namespace FreeDiscussions.Client.UI
                         Name = "Settings...",
                         Click = new DelegateCommand<object>((o) =>
                         {
-                            Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel("Settings")
+                            Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
                             {
                                 HeaderText = "Settings",
                                 IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
@@ -167,7 +167,7 @@ namespace FreeDiscussions.Client.UI
             };
 
             // open home panel on start
-            Context.Instance.UIManager.OpenPanel(PanelLocation.Sidebar, new TabItemModel("Home")
+            Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
             {
                 HeaderText = "Home",
                 IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
@@ -176,6 +176,7 @@ namespace FreeDiscussions.Client.UI
 
             Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
             Task.Run(async () => await LoadPluginMenuItems());
+            //this.InitializePlugins();
         }
 
         private async Task CheckConnectionOrShowSettingsPanel()
@@ -187,7 +188,7 @@ namespace FreeDiscussions.Client.UI
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    Context.Instance.UIManager.OpenPanel(Plugin.PanelLocation.Main, new Plugin.TabItemModel("Settings")
+                    Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
                     {
                         HeaderText = "Settings",
                         IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
@@ -215,12 +216,12 @@ namespace FreeDiscussions.Client.UI
             vm.SidebarVisibility = Visibility.Visible;
         }
 
-        public async Task OpenPanel(PanelLocation location, TabItemModel tab)
+        public async Task OpenPanel(PanelType type, TabItemModel tab)
         {
             var vm = this.DataContext as MainWindowViewModel;
-            if (location == PanelLocation.Main)
+            if (type == PanelType.Main)
             {
-                var currentIndex = vm.MainPanelTabs.Select((item, index) => new { Item = item, Index = index }).Where(x => x.Item.Id == tab.Id).FirstOrDefault();
+                var currentIndex = vm.MainPanelTabs.Select((item, index) => new { Item = item, Index = index }).Where(x => x.Item.Id == tab.Id && x.Item.HeaderText == tab.HeaderText).FirstOrDefault();
                 if (currentIndex != null) {
                     // tab already open
                     vm.SelectedIndexMainPanel = currentIndex.Index;
@@ -268,10 +269,10 @@ namespace FreeDiscussions.Client.UI
             vm.OnPropertyChanged("PluginMenuItems");
         }
 
-        public async Task ClosePanel(string id)
+        public async Task ClosePanel(string headerText)
         {
             var vm = this.DataContext as MainWindowViewModel;
-            var controls = new ObservableCollection<TabItemModel>(vm.MainPanelTabs.Where(x => x.Id != id).ToList());
+            var controls = new ObservableCollection<TabItemModel>(vm.MainPanelTabs.Where(x => x.HeaderText != headerText).ToList());
             vm.MainPanelTabs = controls;
         }
 
@@ -292,7 +293,7 @@ namespace FreeDiscussions.Client.UI
                             me.ContextMenuVisibility = Visibility.Hidden;
                             me.PluginMenuVisibility = Visibility.Hidden;
 
-                            Context.Instance.UIManager.OpenPanel(PanelLocation.Sidebar, new TabItemModel("Home")
+                            Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
                             {
                                 HeaderText = "Home",
                                 IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
@@ -322,28 +323,59 @@ namespace FreeDiscussions.Client.UI
                 {
                     foreach (var plugin in PluginContainer.Instance.Plugins)
                     {
-                        result.Add(new MainWindowViewModel.PluginMenuItemModel
+                        System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(plugin.GetType().Assembly.Location);
+                        string version = fvi.FileVersion;
+
+                        if (plugin.Type == PanelType.Main || plugin.Type == PanelType.Sidebar)
                         {
-                            Name = plugin.Name,
-                            Plugin = plugin,
-                            IsPinned = true,
-                            IconPath = plugin.IconPath,
-                            Click = new DelegateCommand<object>(async (o) =>
+                            result.Add(new MainWindowViewModel.PluginMenuItemModel
                             {
-                                var me = this.DataContext as MainWindowViewModel;
-                                me.ContextMenuVisibility = Visibility.Hidden;
-                                me.PluginMenuVisibility = Visibility.Hidden;
-
-                                var c = await plugin.Create();
-                                c.IconPath = plugin.IconPath;
-                                c.Close = new DelegateCommand<string>((o) =>
+                                Name = plugin.Name,
+                                Plugin = plugin,
+                                IsPinned = true,
+                                Tooltip = $"{plugin.Name}\nVersion: {version}",
+                                IconPath = plugin.IconPath,
+                                Click = new DelegateCommand<object>(async (o) =>
                                 {
-                                    Context.Instance.UIManager.ClosePanel(c.Id);
-                                });
+                                    var me = this.DataContext as MainWindowViewModel;
+                                    me.ContextMenuVisibility = Visibility.Hidden;
+                                    me.PluginMenuVisibility = Visibility.Hidden;
 
-                                Context.Instance.UIManager.OpenPanel(plugin.Location, c);
-                            })
-                        });
+                                    var c = await plugin.Create();
+                                    c.IconPath = plugin.IconPath;
+                                    c.Close = new DelegateCommand<string>((o) =>
+                                    {
+                                        Context.Instance.UIManager.ClosePanel(c.HeaderText);
+                                    });
+
+                                    Context.Instance.UIManager.OpenPanel(plugin.Type, c);
+                                })
+                            });
+                        }
+                        else if (plugin.Type == PanelType.NewsgroupView)
+                        {
+                            result.Add(new MainWindowViewModel.PluginMenuItemModel
+                            {
+                                Name = plugin.Name,
+                                Plugin = plugin,
+                                IsPinned = true,
+                                Tooltip = $"{plugin.Name}\nVersion: {version}",
+                                IconPath = plugin.IconPath,
+                                Click = new DelegateCommand<object>(async (o) =>
+                                {
+                                    var me = this.DataContext as MainWindowViewModel;
+                                    me.ContextMenuVisibility = Visibility.Hidden;
+                                    me.PluginMenuVisibility = Visibility.Hidden;
+
+                                    Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
+                                    {
+                                        HeaderText = "Home",
+                                        IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
+                                        Control = new NewsgroupsPanel(() => { }),
+                                    });
+                                })
+                            });
+                        }
                     }
                 });
 
@@ -360,7 +392,7 @@ namespace FreeDiscussions.Client.UI
 
     public interface IUIManager_
     {
-        Task OpenPanel(PanelLocation location, TabItemModel tab);
+        Task OpenPanel(PanelType type, TabItemModel tab);
         Task ClosePanel(string id);
         void HideSidebar();
         void ShowSidebar();
@@ -506,6 +538,7 @@ namespace FreeDiscussions.Client.UI
         public class PluginMenuItemModel
         {
             public string Name { get; set; }
+            public string Tooltip { get; set; }
             public DelegateCommand<object> Click { get; set; }
 
             private bool _isPinned;

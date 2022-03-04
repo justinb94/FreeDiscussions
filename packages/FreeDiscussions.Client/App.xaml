@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FreeDiscussions.Client"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-             xmlns:models="clr-namespace:FreeDiscussions.Client.Models"
+              xmlns:models="clr-namespace:FreeDiscussions.Plugin.Models;assembly=FreeDiscussions.Plugin"
              xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
              xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
              StartupUri="UI/MainWindow.xaml">
@@ -125,6 +125,9 @@
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#FFAE7B" TargetName="Border" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="TextBlock.Foreground" Value="#9CA3AF" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

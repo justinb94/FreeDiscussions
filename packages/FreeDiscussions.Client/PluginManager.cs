@@ -33,11 +33,16 @@ namespace FreeDiscussions
                 foreach (var dir in Directory.GetDirectories(pluginPath))
                 {
                     var countBefore = PluginContainer.Instance.Plugins.Count;
+                    try { 
                     catalog.Catalogs.Add(new DirectoryCatalog(dir, "*.dll"));
 
                     for (var i = countBefore; i != PluginContainer.Instance.Plugins.Count; i++)
                     {
                         PluginContainer.Instance.Plugins[i].Path = dir;
+                    }
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
                     }
                 }
             }
