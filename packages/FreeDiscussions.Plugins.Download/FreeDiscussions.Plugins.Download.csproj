@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>     
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>D:\Development\Github\free-discussions\packages\FreeDiscussions.Client\bin\Debug\netcoreapp3.1\_plugins\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\download.svg" />
+    <None Remove="Resources\icon.svg" />
+    <None Remove="Resources\remaining.svg" />
+    <None Remove="Resources\size.svg" />
+    <None Remove="screenshot.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetProjects.SVGImage" Version="4.1.97" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1083-prerelease" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FreeDiscussions.Plugin\FreeDiscussions.Plugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\download.svg" />
+    <Resource Include="Resources\icon.svg" />
+    <Resource Include="Resources\remaining.svg" />
+    <Resource Include="Resources\size.svg" />
+    <Resource Include="screenshot.png" />
+  </ItemGroup>
+
+</Project>
