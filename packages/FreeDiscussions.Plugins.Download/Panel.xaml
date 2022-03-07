@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:FreeDiscussions.Plugins.Download"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
               xmlns:svg1="clr-namespace:SVGImage.SVG;assembly=DotNetProjects.SVGImage"
+               xmlns:grid="clr-namespace:FreeDiscussions.Plugins.Download.DataGrid"
              xmlns:plugin="clr-namespace:FreeDiscussions.Plugin;assembly=FreeDiscussions.Plugin"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -19,42 +20,124 @@
     <Grid>
         <TabControl Margin="0 3 0 0">
             <TabItem Header="Downloads">
-                <DataGrid AutoGenerateColumns="False">
+                <!-- Toolbars, SETTINGS WINDOW, NZB DOWNLOAD etc.-->
+                <DataGrid EnableRowVirtualization="True"  SelectedCellsChanged="downloadGrid_SelectedCellsChanged"  AlternatingRowBackground="White"  GridLinesVisibility="None" AutoGenerateColumns="False" Name="downloadGrid" CanUserAddRows="False" BorderThickness="0" Background="White">
+
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
+                        <DataGridTemplateColumn
+					Header="">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{Binding Level, Converter={StaticResource LevelSpaceConverter}}"/>
+                                            <ColumnDefinition Width="{StaticResource TreeToggleWidth}"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                        <CheckBox 
+									Grid.Column="1"
+                                    Style="{StaticResource styleCustomCheckBox}" 
+									IsChecked="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									Visibility="{Binding HasChildren, Converter={StaticResource TreeToggleConverter}}"/>
 
-                        <DataGridTextColumn Binding="{Binding Size}" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}" CanUserSort="False">
-                            <DataGridTextColumn.Header>
-                                <svg1:SVGImage Source="/FreeDiscussions.Plugins.Download;component/Resources/download.svg" Height="16" Width="16" Margin="3 0"/>
-                            </DataGridTextColumn.Header>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding TotalSize}" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}" CanUserSort="False">
-                            <DataGridTextColumn.Header>
-                                <svg1:SVGImage Source="/FreeDiscussions.Plugins.Download;component/Resources/size.svg" Height="16" Width="16" Margin="3 0"/>
-                            </DataGridTextColumn.Header>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding TotalSize}" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}" CanUserSort="False">
-                            <DataGridTextColumn.Header>
-                                <svg1:SVGImage Source="/FreeDiscussions.Plugins.Download;component/Resources/remaining.svg" Height="16" Width="16" Margin="3 0"/>
-                            </DataGridTextColumn.Header>
-                        </DataGridTextColumn>                        
+                                        <TextBlock
+									Grid.Column="2"
+                                    Margin="0 0 12 0"
+									Text="">
+                                            <TextBlock.Style>
+                                                <Style>
+                                                    <Setter Property="TextBlock.FontWeight" Value="Bold" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsRead}" Value="True">
+                                                            <Setter Property="TextBlock.FontWeight" Value="Normal" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+					Header="Status"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding Status}"/>
+                        <DataGridTextColumn
+					Header="Name"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding Name}"/>
+                        <DataGridTextColumn
+					Header="Size Loaded"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding SizeLoaded}"/>
+                        <DataGridTextColumn
+					Header="Total Loaded"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding TotalLoaded}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
             <TabItem Header="Finished Downloads">
-                <DataGrid AutoGenerateColumns="False">
+                <DataGrid EnableRowVirtualization="True"  SelectedCellsChanged="finishedDownloadGrid_SelectedCellsChanged"  AlternatingRowBackground="White"  GridLinesVisibility="None" AutoGenerateColumns="False" Name="finishedDownloadGrid" CanUserAddRows="False" BorderThickness="0" Background="White">
+
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
+                        <DataGridTemplateColumn
+					Header="Betreff">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{Binding Level, Converter={StaticResource LevelSpaceConverter}}"/>
+                                            <ColumnDefinition Width="{StaticResource TreeToggleWidth}"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                        <CheckBox 
+									Grid.Column="1"
+                                    Style="{StaticResource styleCustomCheckBox}" 
+									IsChecked="{Binding IsExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									Visibility="{Binding HasChildren, Converter={StaticResource TreeToggleConverter}}"/>
 
-                        <DataGridTextColumn Binding="{Binding TotalSize}" Width="80" HeaderStyle="{StaticResource CenterGridHeaderStyle}" CanUserSort="False">
-                            <DataGridTextColumn.Header>
-                                <svg1:SVGImage Source="/FreeDiscussions.Plugins.Download;component/Resources/size.svg" Height="16" Width="16" Margin="3 0"/>
-                            </DataGridTextColumn.Header>
-                        </DataGridTextColumn>
+                                        <TextBlock
+									Grid.Column="2"
+                                    Margin="0 0 12 0"
+									Text="{Binding Subject}">
+                                            <TextBlock.Style>
+                                                <Style>
+                                                    <Setter Property="TextBlock.FontWeight" Value="Bold" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsRead}" Value="True">
+                                                            <Setter Property="TextBlock.FontWeight" Value="Normal" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+					Header="Absender"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding From}"/>
+                        <DataGridTextColumn
+					Header="Datum"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding Date, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"/>
+                        <DataGridTextColumn
+					Header="# Beiträge"
+                    IsReadOnly="True"
+                    CanUserSort="False"
+					Binding="{Binding Children.Count}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -62,3 +145,4 @@
     </Grid>
 
 </plugin:Panel>
+

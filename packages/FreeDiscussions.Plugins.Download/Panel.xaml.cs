@@ -24,5 +24,15 @@ namespace FreeDiscussions.Plugins.Download
         {
             InitializeComponent();
         }
+
+        private void downloadGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+
+        }
+
+        private void finishedDownloadGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+
+        }
     }
 }
