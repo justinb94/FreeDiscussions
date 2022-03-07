@@ -5,7 +5,7 @@ namespace FreeDiscussions.Plugin
 {
     public interface IPlugin
     {
-        public PanelLocation Location { get; set; }
+        public PanelType Type{ get; set; }
 
         public string Guid { get; set; }
 
@@ -13,7 +13,7 @@ namespace FreeDiscussions.Plugin
 
         public string IconPath { get; set; }
 
-        public Task<TabItemModel> Create();
+        public Task<TabItemModel> Create(params object[] args);
 
         string Path { get; set; }
     }

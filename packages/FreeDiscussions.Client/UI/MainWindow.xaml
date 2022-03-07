@@ -125,12 +125,12 @@
             </Grid.ColumnDefinitions>
             
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Border Margin="6 0 0 0" Height="70" Width="180">
+            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left">
+                <Border Margin="6 0 0 0" Height="50" Width="180">
                     <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/logo_orange.svg" Margin="0,0,-67,-35" />
                     <!--Height="20" Width="20" Margin="12 0 0 0"-->
                 </Border>
-                <StackPanel  Grid.Column="1" Margin="90 28 0 0" Orientation="Horizontal">
+                <StackPanel  Grid.Column="1" Margin="12 16 0 0" HorizontalAlignment="Left" Orientation="Horizontal">
                     <TextBlock FontWeight="Regular" FontSize="16">
                     Framework
                     </TextBlock>
@@ -142,6 +142,11 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 6 0">
                 <StackPanel Margin="12 36 0 0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Border Width="3" Height="64" Margin="6 -42 16 0">
+                        <Border.Background>
+                            <SolidColorBrush Color="LightGray"/>
+                        </Border.Background>
+                    </Border>
                     <TextBlock FontWeight="Regular" FontSize="16" Margin="0 0 42 0">
                     Unverified Plugins
                     </TextBlock>
@@ -188,15 +193,18 @@
                     </Border.Background>
                 </Border>
 
-                <Button Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding PuzzleClicked}">
-                    <Button.Background>
-                        <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
-                    </Button.Background>
-                    <Button.Content>
-                        <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/puzzle.svg" Height="24" Width="24"/>
-                    </Button.Content>
-                </Button>
-                
+                <StackPanel VerticalAlignment="Center" Margin="0 14 0 0">
+                    <Button Style="{StaticResource TopButtonStyle_}" MinWidth="42" Height="42" BorderThickness="0" Command="{Binding PuzzleClicked}">
+                        <Button.Background>
+                            <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
+                        </Button.Background>
+                        <Button.Content>
+                            <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/puzzle.svg" Height="24" Width="24"/>
+                        </Button.Content>
+                    </Button>
+                    <TextBlock>Plugins</TextBlock>
+                </StackPanel>
+
                 <Button Style="{StaticResource TopButtonStyle_}" MinWidth="32" Height="42" BorderThickness="0" Command="{Binding DotsClicked}">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource PrimaryBackground_}"/>
@@ -204,7 +212,8 @@
                     <Button.Content>
                         <svg1:SVGImage Source="/FreeDiscussions.Client;component/Resources/dots.svg" Height="24" Width="16"/>
                     </Button.Content>
-                </Button>                
+                </Button>
+       
             </StackPanel>
         </Grid>
 
