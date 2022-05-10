@@ -69,23 +69,23 @@ namespace FreeDiscussions.Client.UI
                 // we use the first we get here, maybe implement a picker window to present to the user
                 tabItem.Close = new DelegateCommand<string>((o) =>
                 {
-                    Context.Instance.UIManager.ClosePanel(tabItem.HeaderText);
+                    Context.UIController.ClosePanel(tabItem.HeaderText);
                 });
 
-                 await Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, tabItem);
+                 await Context.UIController.OpenPanel(Plugin.PanelType.Main, tabItem);
                 return;
             }
 
-            await Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel(newsgroupName)
+            await Context.UIController.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel(newsgroupName)
             {
                 HeaderText = newsgroupName,
                 IconPath = "/FreeDiscussions.Client;component/Resources/globe.svg",
                 Control = new NewsgroupsContentPanel(newsgroupName, () => {
-                    Context.Instance.UIManager.ClosePanel(newsgroupName);
+                    Context.UIController.ClosePanel(newsgroupName);
                 }),
                 Close = new DelegateCommand<string>((o) =>
                 {
-                    Context.Instance.UIManager.ClosePanel(newsgroupName);
+                    Context.UIController.ClosePanel(newsgroupName);
                 })
             });
         }

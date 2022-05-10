@@ -67,10 +67,9 @@ namespace FreeDiscussions.Client.UI
 
         private async Task Post()
         {
-            var client = await ConnectionManager.GetClient();
-            try
+            using (var _client = await ConnectionManager.GetClient())
             {
-
+                var client = _client.Nntp;
                 string messageId = $"{Guid.NewGuid()}@example.net";
 
                 var x = this.DataContext as NewMessageModel;
@@ -99,10 +98,6 @@ namespace FreeDiscussions.Client.UI
                 {
                     MessageBox.Show("Error posting new article.");
                 }
-            }
-            finally
-            {
-                client.Quit();
             }
         }
     }

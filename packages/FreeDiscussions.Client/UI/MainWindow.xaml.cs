@@ -19,6 +19,10 @@ using System.Collections.ObjectModel;
 using Serilog;
 using Microsoft.Extensions.Logging;
 using FreeDiscussions.Plugin.Models;
+using Usenet.Nntp.Models;
+using System.IO;
+using Usenet.Nntp;
+using Usenet.Nzb;
 
 namespace FreeDiscussions.Client.UI
 {
@@ -28,22 +32,26 @@ namespace FreeDiscussions.Client.UI
     /// Interaction logic for MainWindow2.xaml
     /// </summary>
 
-    public partial class MainWindow : Window, IUIManager_
+    public partial class MainWindow : Window, IUIController, IDownloadController
     {
-        // import some functions for the custom window
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
+        public static class KnownFolder
+        {
+            public static readonly Guid Downloads = new Guid("374DE290-123F-4565-9164-39C4925E467B");
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out string pszPath);
+
+
 
         public MainWindow()
         {
+            AppContext.SetSwitch("Switch.System.Runtime.Serialization.SerializationGuard.AllowFileWrites", true);
+
             InitializeComponent();
 
-            Context.Instance = new Context
-            {
-                UIManager = this
-            };
+            Context.UIController = this;
+            Context.DownloadController = this;
 
             // initialize logger
             Log.Logger = new LoggerConfiguration()
@@ -81,11 +89,6 @@ namespace FreeDiscussions.Client.UI
                     psi.FileName = uri;
                     System.Diagnostics.Process.Start(psi);
                 }),
-                WindowDrag = new DelegateCommand<object>((o) =>
-                {
-                    ReleaseCapture();
-                    SendMessage(new WindowInteropHelper(this).Handle, 0xA1, (IntPtr)0x2, (IntPtr)0);
-                }),
                 DotsClicked = new DelegateCommand<object>((sender) =>
                 {
                     var me = this.DataContext as MainWindowViewModel;
@@ -116,16 +119,16 @@ namespace FreeDiscussions.Client.UI
                         Name = "Settings...",
                         Click = new DelegateCommand<object>((o) =>
                         {
-                            Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
+                            Context.UIController.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
                             {
                                 HeaderText = "Settings",
                                 IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
                                 Control = new SettingsPanel(() => {
-                                    Context.Instance.UIManager.ClosePanel("Settings");
+                                    Context.UIController.ClosePanel("Settings");
                                 }),
                                 Close = new DelegateCommand<string>((o) =>
                                 {
-                                    Context.Instance.UIManager.ClosePanel("Settings");
+                                    Context.UIController.ClosePanel("Settings");
                                 })
                             });
                         })
@@ -167,7 +170,7 @@ namespace FreeDiscussions.Client.UI
             };
 
             // open home panel on start
-            Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
+            Context.UIController.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
             {
                 HeaderText = "Home",
                 IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
@@ -188,16 +191,16 @@ namespace FreeDiscussions.Client.UI
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    Context.Instance.UIManager.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
+                    Context.UIController.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
                     {
                         HeaderText = "Settings",
                         IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
                         Control = new SettingsPanel(() => {
-                            Context.Instance.UIManager.ClosePanel("Settings");
+                            Context.UIController.ClosePanel("Settings");
                         }),
                         Close = new DelegateCommand<string>((o) =>
                         {
-                            Context.Instance.UIManager.ClosePanel("Settings");
+                            Context.UIController.ClosePanel("Settings");
                         })
                     });
                 });
@@ -261,7 +264,7 @@ namespace FreeDiscussions.Client.UI
             }
         }
 
-        void IUIManager_.UpdatePlugins()
+        void IUIController.UpdatePlugins()
         {
             var vm = this.DataContext as MainWindowViewModel;
             if (vm == null) return;
@@ -293,7 +296,7 @@ namespace FreeDiscussions.Client.UI
                             me.ContextMenuVisibility = Visibility.Hidden;
                             me.PluginMenuVisibility = Visibility.Hidden;
 
-                            Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
+                            Context.UIController.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
                             {
                                 HeaderText = "Home",
                                 IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
@@ -323,6 +326,8 @@ namespace FreeDiscussions.Client.UI
                 {
                     foreach (var plugin in PluginContainer.Instance.Plugins)
                     {
+                        await plugin.Init();
+
                         System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(plugin.GetType().Assembly.Location);
                         string version = fvi.FileVersion;
 
@@ -345,10 +350,10 @@ namespace FreeDiscussions.Client.UI
                                     c.IconPath = plugin.IconPath;
                                     c.Close = new DelegateCommand<string>((o) =>
                                     {
-                                        Context.Instance.UIManager.ClosePanel(c.HeaderText);
+                                        Context.UIController.ClosePanel(c.HeaderText);
                                     });
 
-                                    Context.Instance.UIManager.OpenPanel(plugin.Type, c);
+                                    Context.UIController.OpenPanel(plugin.Type, c);
                                 })
                             });
                         }
@@ -367,7 +372,7 @@ namespace FreeDiscussions.Client.UI
                                     me.ContextMenuVisibility = Visibility.Hidden;
                                     me.PluginMenuVisibility = Visibility.Hidden;
 
-                                    Context.Instance.UIManager.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
+                                    Context.UIController.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
                                     {
                                         HeaderText = "Home",
                                         IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
@@ -388,16 +393,116 @@ namespace FreeDiscussions.Client.UI
             return result;
         }
 
+        public async Task<bool> IsFile(string articleId)
+        {
+            using (var _client = await ConnectionManager.GetClient())
+            {
+                var body = _client.Nntp.Body(articleId);
+                if (!body.Success)
+                {
+                    Console.WriteLine("WT");
+                }
+
+                if (!body.Success) return false;
+                var firstLine = body.Article.Body.FirstOrDefault();
+                var secondLine = body.Article.Body.FirstOrDefault();
+
+                return !String.IsNullOrEmpty(firstLine) && firstLine.StartsWith("=ybegin") || !String.IsNullOrEmpty(secondLine) && secondLine.StartsWith("=ybegin");
+            }        
+        }
+
+        public void ShowSettingsPanel()
+        {
+            Context.UIController.OpenPanel(Plugin.PanelType.Main, new Plugin.TabItemModel("Settings")
+            {
+                HeaderText = "Settings",
+                IconPath = "/FreeDiscussions.Client;component/Resources/gear.svg",
+                Control = new SettingsPanel(() => {
+                    Context.UIController.ClosePanel("Settings");
+                }),
+                Close = new DelegateCommand<string>((o) =>
+                {
+                    Context.UIController.ClosePanel("Settings");
+                })
+            });
+        }
+
+        IDownloadController GetDownloadPlugin()
+        {
+            foreach (var plugin in PluginContainer.Instance.Plugins)
+            {
+                var p = plugin as IDownloadController;
+                if (p != null) return p;
+            }
+            return null;
+        }
+
+        public async Task DownloadArticle(string messageId, string folder)
+        {
+            var downloadPlugin = this.GetDownloadPlugin();
+            if (downloadPlugin != null)
+            {
+                downloadPlugin.DownloadArticle(messageId, folder);
+                return;
+            }
+
+            new Task(async () =>
+            {
+                using (var client = await ConnectionManager.GetClient())
+                {
+                    var article = client.Nntp.Body(messageId);
+                    if (!article.Success) return;
+                    var text = String.Join("\n", article.Article.Body.ToList());
+                    File.WriteAllText(GenerateFilePath(messageId, folder), text);
+                }
+            }).RunSynchronously();
+        }
+
+        private string GenerateFilePath(string messageId, string folder)
+        {
+            string downloads;
+            SHGetKnownFolderPath(KnownFolder.Downloads, 0, IntPtr.Zero, out downloads);
+
+            var destinationFolder = System.IO.Path.GetFullPath(downloads + "/FreeDiscussions/" + folder + "/");
+            if (!Directory.Exists(destinationFolder))
+            {
+                Directory.CreateDirectory(destinationFolder);
+            }
+
+            var fileName = messageId;
+            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(c, '_');
+            }
+
+            var destinationFile = System.IO.Path.GetFullPath(destinationFolder + fileName + ".txt");
+            return destinationFile;
+        }
+
+        public void DownloadNzb(string fileName, string folder)
+        {
+            var downloadPlugin = this.GetDownloadPlugin();
+            if (downloadPlugin != null)
+            {
+                downloadPlugin.DownloadNzb(fileName, folder);
+                return;
+            }
+            else MessageBox.Show("Downloading Nzb Files is not supported. Please consider getting a plugin.", "Not supported", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void DownloadNzb(string name, string folder, List<NzbFile> files)
+        {
+            var downloadPlugin = this.GetDownloadPlugin();
+            if (downloadPlugin != null)
+            {
+                downloadPlugin.DownloadNzb(name, folder, files);
+                return;
+            }
+            else MessageBox.Show("Downloading Nzb Files is not supported. Please consider getting a plugin.", "Not supported", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 
-    public interface IUIManager_
-    {
-        Task OpenPanel(PanelType type, TabItemModel tab);
-        Task ClosePanel(string id);
-        void HideSidebar();
-        void ShowSidebar();
-        void UpdatePlugins();
-    }
+
 
     public class MainWindowViewModel : INotifyPropertyChanged
     {
@@ -549,7 +654,7 @@ namespace FreeDiscussions.Client.UI
                 }
                 set {
                     this._isPinned = value;
-                    Context.Instance.UIManager.UpdatePlugins();
+                    Context.UIController.UpdatePlugins();
                 }
             }
             public string IconPath { get; set; }

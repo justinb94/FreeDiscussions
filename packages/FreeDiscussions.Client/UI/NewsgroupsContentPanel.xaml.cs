@@ -55,154 +55,133 @@ namespace FreeDiscussions.Client.UI
 
             SelectedArticle = article;
 
-            var client = await ConnectionManager.GetClient();
-            try
+            using (var _client = await ConnectionManager.GetClient())
             {
+                var client = _client.Nntp;
+
                 var settings = SettingsModel.Read();
                 client.Group(SelectedNewsgroup);
 
+
+                var a = client.Article(article.MessageId);
+                if (a.Article == null)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ArticleBody.Text = "Message not found";
+                        ArticleContentRow.Height = new System.Windows.GridLength(280);
+                    });
+                    return;
+                }
+
                 try
                 {
-
-                    var a = client.Article(article.MessageId);
-                    if (a.Article == null)
+                    // decode the yEnc-encoded article
+                    using (YencStream yencStream = YencStreamDecoder.Decode(a.Article.Body))
                     {
                         this.Dispatcher.Invoke(() =>
-                        {
-                            ArticleBody.Text = "Message not found";
-                            ArticleContentRow.Height = new System.Windows.GridLength(280);
-                        });
-                        return;
-                    }
-
-                    try
-                    {
-                        // decode the yEnc-encoded article
-                        using (YencStream yencStream = YencStreamDecoder.Decode(a.Article.Body))
-                        {
-                            this.Dispatcher.Invoke(() =>
-                                {
-                                    DownloadButton.Visibility = Visibility.Visible;
-                                    ArticleBody.Text = "This is a binary. Press Download to save on disk.";
-                                    ArticleGridToolbarRow.Height = new GridLength(28);
-                                    ArticleContentRow.Height = new GridLength(280);
-                                    Splitter.Visibility = Visibility.Visible;
-                                });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var articleWithBody = client.Body(article.MessageId);
-                        var text = String.Join("\n", articleWithBody.Article.Body.ToList());
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            ArticleBody.Text = text;
-                            ArticleGridToolbarRow.Height = new GridLength(28);
-                            ArticleContentRow.Height = new GridLength(280);
-                            Splitter.Visibility = Visibility.Visible;
-                        });
-
-                        // try uuencode 
-
-                        // Text 
-                        //var articleWithBody = client.nntp.Body(article.MessageId);
-                        //var text = String.Join("\n", articleWithBody.Article.Body.ToList());
-
-                        //if (text.StartsWith("beginn"))
-                        //{
-                        //    //uuenceded
-                        //    try
-                        //    {
-                        //        var d = uuDecode(text);
-                        //    }
-                        //    catch (Exception exo)
-                        //    {
-                        //        this.Dispatcher.Invoke(() =>
-                        //        {
-                        //            ArticleBody.Text = text;
-                        //        });
-
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    this.Dispatcher.Invoke(() =>
-                        //    {
-                        //        ArticleBody.Text = text;
-                        //    });
-                        //}
+                            {
+                                DownloadButton.Visibility = Visibility.Visible;
+                                ArticleBody.Text = "This is a binary. Press Download to save on disk.";
+                                ArticleGridToolbarRow.Height = new GridLength(28);
+                                ArticleContentRow.Height = new GridLength(280);
+                                Splitter.Visibility = Visibility.Visible;
+                            });
                     }
                 }
                 catch (Exception ex)
                 {
+                    var articleWithBody = client.Body(article.MessageId);
+                    var text = String.Join("\n", articleWithBody.Article.Body.ToList());
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        ArticleBody.Text = text;
+                        ArticleGridToolbarRow.Height = new GridLength(28);
+                        ArticleContentRow.Height = new GridLength(280);
+                        Splitter.Visibility = Visibility.Visible;
+                    });
+
+                    // try uuencode 
+
+                    // Text 
+                    //var articleWithBody = client.nntp.Body(article.MessageId);
+                    //var text = String.Join("\n", articleWithBody.Article.Body.ToList());
+
+                    //if (text.StartsWith("beginn"))
+                    //{
+                    //    //uuenceded
+                    //    try
+                    //    {
+                    //        var d = uuDecode(text);
+                    //    }
+                    //    catch (Exception exo)
+                    //    {
+                    //        this.Dispatcher.Invoke(() =>
+                    //        {
+                    //            ArticleBody.Text = text;
+                    //        });
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    this.Dispatcher.Invoke(() =>
+                    //    {
+                    //        ArticleBody.Text = text;
+                    //    });
+                    //}
                 }
-            }
-            finally
-            {
-                try
-                {
-                    client.Quit();
-                }
-                catch { }
             }
         }
 
         private async Task LoadNewsgroup()
         {
             Log.Information("LoadNewsgroup...");
-            var client = await ConnectionManager.GetClient();
-            Log.Information("Got a client.");
-            try
+            using (var _client = await ConnectionManager.GetClient())
             {
-                Log.Information("Select group");
-                var group = client.Group(SelectedNewsgroup);
-                Log.Information("Group selected");
-
-                Log.Information("Invoke creating a DispatchTimer");
-                this.Dispatcher.Invoke(() =>
-                {
-                    Log.Information("Create DispatchTimer");
-                    DispatcherTimer dispatcherTimer = new DispatcherTimer();
-                    dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-                    dispatcherTimer.Start();
-                    Log.Information("DispatchTimer started");
-                });
-
-                Log.Information("Clear articles");
-                articles.Clear();
-
-                SelectedGroupHigh = group.Group.HighWaterMark;
-                SelectedGroupLow = group.Group.LowWaterMark;
-
-                Log.Information($"HIGH: {SelectedGroupHigh}, LOW: {SelectedGroupLow}");
-
-                Task task = Task.Run(() => GetFirst());
-            }
-            catch(Exception ex)
-            {
-                Log.Error(ex, "Error LoadNewsgroup");
-
-                var x = await ConnectionManager.CheckConnection();
-                this.Dispatcher.Invoke(() =>
-                {
-                    if (!x)
-                    {
-                        UIManager.Instance.ClosePanel(SelectedNewsgroup);
-                        MessageBox.Show("Can't connect. Please check your settings.");
-                        UIManager.Instance.ShowSettingsPanel();
-                    }
-                });
-            }
-            finally
-            {
+                var client = _client.Nntp;
+                Log.Information("Got a client.");
                 try
                 {
-                    client.Quit();
-                } 
-                catch
+                    Log.Information("Select group");
+                    var group = client.Group(SelectedNewsgroup);
+                    Log.Information("Group selected");
+
+                    Log.Information("Invoke creating a DispatchTimer");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        Log.Information("Create DispatchTimer");
+                        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+                        dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+                        dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                        dispatcherTimer.Start();
+                        Log.Information("DispatchTimer started");
+                    });
+
+                    Log.Information("Clear articles");
+                    articles.Clear();
+
+                    SelectedGroupHigh = group.Group.HighWaterMark;
+                    SelectedGroupLow = group.Group.LowWaterMark;
+
+                    Log.Information($"HIGH: {SelectedGroupHigh}, LOW: {SelectedGroupLow}");
+
+                    Task task = Task.Run(() => GetFirst());
+                }
+                catch (Exception ex)
                 {
-                    // if connection failed, Quit will fail as well
+                    Log.Error(ex, "Error LoadNewsgroup");
+
+                    var x = await ConnectionManager.CheckConnection();
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        if (!x)
+                        {
+                            Context.UIController.ClosePanel(SelectedNewsgroup);
+                            MessageBox.Show("Can't connect. Please check your settings.");
+                            Context.UIController.ShowSettingsPanel();
+                        }
+                    });
                 }
             }
         }
@@ -213,9 +192,10 @@ namespace FreeDiscussions.Client.UI
 
             var credentials = SettingsModel.GetCredentials();
             var settings = SettingsModel.Read();
-            var client = await ConnectionManager.GetClient();
-            try
+
+            using (var _client = await ConnectionManager.GetClient())
             {
+                var client = _client.Nntp;
 
                 var g = client.Group(SelectedNewsgroup);
                 var e = 0;
@@ -227,7 +207,8 @@ namespace FreeDiscussions.Client.UI
                     {
                         Log.Information($"Received article {a.Article.MessageId}");
                         articles.Add(ArticleFactory.GetArticle(a));
-                    } else
+                    }
+                    else
                     {
                         Log.Information($"Error receiving article, StatusCode: {a.Code}");
                     }
@@ -240,10 +221,6 @@ namespace FreeDiscussions.Client.UI
                         break;
                     }
                 }
-            }
-            finally
-            {
-                client.Quit();
             }
         }
 
@@ -263,9 +240,9 @@ namespace FreeDiscussions.Client.UI
         {
             var settings = SettingsModel.Read();
 
-            var client = await ConnectionManager.GetClient();
-            try
+            using (var _client = await ConnectionManager.GetClient())
             {
+                var client = _client.Nntp;
                 var article = client.Article(SelectedArticle.MessageId);
 
                 using (YencStream yencStream = YencStreamDecoder.Decode(article.Article.Body))
@@ -297,10 +274,6 @@ namespace FreeDiscussions.Client.UI
                         }
                     }
                 }
-            }
-            finally
-            {
-                client.Quit();
             }
         }
 
