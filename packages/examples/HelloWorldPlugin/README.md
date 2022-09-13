@@ -1,10 +1,10 @@
 # How to create a plugin
 
-In this tutorial we will create a small "Hello World" plugin to illustrate how to extend the Free Discussions Client.
+In this tutorial, we will create a small "Hello World" plugin to illustrate how to extend the Free Discussions Client.
 
 ---
 
-## 1. Create a new project
+## 1. Create a new project.
 
 At first, we need a project to work with.
 In Visual Studio, go to File > New > Project. This will open the "Create project dialog".
@@ -14,20 +14,20 @@ On the first page:
 - Choose "Class Library".
 - Click Next
 
-On the secord page:
+On the second page:
 
 - Give the project a name and a Solution name. (in our case, we choose "HelloWorldPlugin")
 - Click Next
 
 On the third page:
 
-- Choose the Framework .NET Core 3.1 (Long-term support).
+- Select the Framework .NET Core 3.1 (Long-term support).
 
-## We now have a empty project. Lets make a plugin out of it!
+## We now have an empty project. Let's make a plugin out of it!
 
 ---
 
-## 2. Project References
+## 2. Project References.
 
 Free Discussions uses the [Managed Extensibility Framework (MEF)](https://docs.microsoft.com/en-US/dotnet/framework/mef/).
 
@@ -37,7 +37,7 @@ Free Discussions uses the [Managed Extensibility Framework (MEF)](https://docs.m
 
 - Add reference to `FreeDiscussions.Plugin`
 
-## 3. Create our plugin
+## 3. Create our plugin.
 
 The FreeDiscussions Client is looking for .DLL files containing a class which extends `FreeDiscussions.Plugin.Plugin`.
 
@@ -45,7 +45,7 @@ The FreeDiscussions Client is looking for .DLL files containing a class which ex
 
 In order for the client to find the plugin, we need to extend the `IPlugin` interfaces located in the `FreeDiscussions.Plugin.Plugin` namespace.
 
-For our plugin we create a new class called `Plugin.cs`.
+For our plugin, we create a new class called `Plugin.cs`.
 
 ```csharp
 using FreeDiscussions.Plugin;
@@ -125,7 +125,7 @@ namespace HelloWorldPlugin
 }
 ```
 
-## 4. Testing the plugin
+## 4. Testing the plugin.
 
 In order to test the plugin, we set the output path of our plugin to the plugin's folder of the FreeDiscussions Client.
 
@@ -135,6 +135,6 @@ In order to test the plugin, we set the output path of our plugin to the plugin'
 - Build your project
 - Run the Client
 
-## Congratulations! You have now succesfuly created your first plugin for the Free Discussions Client!
+## Congratulations! You have now successfully created your first plugin for the Free Discussions Client!
 
 ![Congratulations](https://media3.giphy.com/media/mGK1g88HZRa2FlKGbz/giphy.gif?cid=790b761179ba0375102e188cbbb3a95b6fa09e231a05b39a&rid=giphy.gif&ct=g)
