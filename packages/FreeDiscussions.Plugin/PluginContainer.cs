@@ -5,6 +5,9 @@ using System.Text;
 
 namespace FreeDiscussions.Plugin
 {
+    /// <summary>
+    /// A container that holds all the plugins
+    /// </summary>
     public class PluginContainer
     {
         public static PluginContainer Instance = new PluginContainer();

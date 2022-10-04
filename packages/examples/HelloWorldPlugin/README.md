@@ -35,15 +35,17 @@ Free Discussions uses the [Managed Extensibility Framework (MEF)](https://docs.m
 
   `dotnet add package System.ComponentModel.Composition --version 6.0.0`
 
-- Add reference to `FreeDiscussions.Plugin`
+- Check out this repository `git clone https://github.com/justinb94/FreeDiscussions.git`
+
+- Add reference to `FreeDiscussions.Plugin`. 
 
 ## 3. Create our plugin.
 
-The FreeDiscussions Client is looking for .DLL files containing a class which extends `FreeDiscussions.Plugin.Plugin`.
+The FreeDiscussions Client is looking for .DLL files containing a class which extends `FreeDiscussions.Plugin.BasePlugin`.
 
 ### 3.1 Create our plugin class
 
-In order for the client to find the plugin, we need to extend the `IPlugin` interfaces located in the `FreeDiscussions.Plugin.Plugin` namespace.
+In order for the client to find the plugin, we need to extend the `BasePlugin` class located in the `FreeDiscussions.Plugin.Plugin` namespace.
 
 For our plugin, we create a new class called `Plugin.cs`.
 
@@ -54,7 +56,7 @@ using System.Threading.Tasks;
     namespace HelloWorldPlugin
     {
 		[System.ComponentModel.Composition.Export(typeof(IPlugin))]
-		public class Plugin : FreeDiscussions.Plugin.Plugin
+		public class Plugin : FreeDiscussions.Plugin.BasePlugin
 		{
 			// location of the plugin's ui, we choose to show it in the sidebar
 			public override PanelType Type { get => PanelType.Sidebar; set { } }

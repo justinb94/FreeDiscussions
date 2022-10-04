@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace HelloWorldPlugin
 {
 	[System.ComponentModel.Composition.Export(typeof(IPlugin))]
-	public class Plugin : FreeDiscussions.Plugin.Plugin
+	public class Plugin : FreeDiscussions.Plugin.BasePlugin
 	{
 		public override PanelType Type { get => PanelType.Sidebar; set { } }
 		public override string Guid { get => "HelloWorldPlugin"; set { } }

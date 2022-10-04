@@ -1,5 +1,9 @@
 ﻿using System;
 
+/// <summary>
+/// Delegate to use as a command for e.g. Buttons 
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class DelegateCommand<T> : System.Windows.Input.ICommand where T : class
 {
     private readonly Predicate<T> _canExecute;
