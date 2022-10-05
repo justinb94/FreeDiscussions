@@ -24,6 +24,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: unshallow
+        run: |
+          git fetch --unshallow --tags
+          git tag --list
+
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
