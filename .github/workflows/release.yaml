@@ -49,7 +49,7 @@ jobs:
           password: '${{ secrets.CERTPASSWORD }}'
           certificatesha1: '${{ secrets.CERTHASH }}'
           certificatename: '${{ secrets.CERTNAME }}'
-          folder: ./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1 
+          folder: "packages"
           recursive: true
 
       - name: "Client: Pack"
