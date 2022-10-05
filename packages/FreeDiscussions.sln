@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29920.165
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeDiscussions.Client", "FreeDiscussions.Client\FreeDiscussions.Client.csproj", "{C9B50227-74A6-4AEE-B497-38B92BFC1B52}"
 EndProject
@@ -18,6 +18,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeDiscussions.Plugins.Sports", "FreeDiscussions.Plugins.Sports\FreeDiscussions.Plugins.Sports.csproj", "{23DEA072-6664-4053-9D67-CF1C16C6C3B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeDiscussions.Plugins.News", "FreeDiscussions.Plugins.News\FreeDiscussions.Plugins.News.csproj", "{E0D7C70D-2D39-46EE-A3DA-6BEE591CFA6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Usenet", "Usenet\Usenet.csproj", "{00DFE3E7-EBB8-4BE4-99C7-70CFA97998B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeDiscussions.Plugins.NewzBee", "FreeDiscussions.Plugins.NewzBee\FreeDiscussions.Plugins.NewzBee.csproj", "{51C4B3C1-746B-4814-835E-D5E3CFB2EBF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{91BBFEA4-2AD4-4427-AF2F-5AA3CFDAE879}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldPlugin", "examples\HelloWorldPlugin\HelloWorldPlugin.csproj", "{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,9 +65,24 @@ Global
 		{E0D7C70D-2D39-46EE-A3DA-6BEE591CFA6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0D7C70D-2D39-46EE-A3DA-6BEE591CFA6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0D7C70D-2D39-46EE-A3DA-6BEE591CFA6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00DFE3E7-EBB8-4BE4-99C7-70CFA97998B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00DFE3E7-EBB8-4BE4-99C7-70CFA97998B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00DFE3E7-EBB8-4BE4-99C7-70CFA97998B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00DFE3E7-EBB8-4BE4-99C7-70CFA97998B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51C4B3C1-746B-4814-835E-D5E3CFB2EBF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51C4B3C1-746B-4814-835E-D5E3CFB2EBF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51C4B3C1-746B-4814-835E-D5E3CFB2EBF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51C4B3C1-746B-4814-835E-D5E3CFB2EBF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{152496BD-6B69-49A9-ACC6-8A82A1B2B4D6} = {91BBFEA4-2AD4-4427-AF2F-5AA3CFDAE879}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE8890E7-A760-4FC0-8C11-8814B50F9F9B}

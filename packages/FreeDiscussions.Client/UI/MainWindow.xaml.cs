@@ -46,6 +46,10 @@ namespace FreeDiscussions.Client.UI
 
         public MainWindow()
         {
+
+            Configuration.doIt();
+
+
             AppContext.SetSwitch("Switch.System.Runtime.Serialization.SerializationGuard.AllowFileWrites", true);
 
             InitializeComponent();
@@ -489,13 +493,13 @@ namespace FreeDiscussions.Client.UI
             }
             else MessageBox.Show("Downloading Nzb Files is not supported. Please consider getting a plugin.", "Not supported", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
-        public void DownloadNzb(string name, string folder, List<NzbFile> files)
+        
+        public void DownloadNzb(string name, string folder, List<NzbFile> files, ICollection<string> archivePassword)
         {
             var downloadPlugin = this.GetDownloadPlugin();
             if (downloadPlugin != null)
             {
-                downloadPlugin.DownloadNzb(name, folder, files);
+                downloadPlugin.DownloadNzb(name, folder, files, archivePassword);
                 return;
             }
             else MessageBox.Show("Downloading Nzb Files is not supported. Please consider getting a plugin.", "Not supported", MessageBoxButton.OK, MessageBoxImage.Information);
