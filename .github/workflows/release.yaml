@@ -43,7 +43,7 @@ jobs:
         run: cd packages && dotnet build FreeDiscussions.Client
 
       - name: Workaround
-        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement.dll" -NewName "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement._dll"
+        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement.dll" -NewName "CredentialManagement._dll"
 
 
       - name: "Client: Sign"
@@ -57,7 +57,7 @@ jobs:
           recursive: true
 
       - name: Workaround
-        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement._dll" -NewName "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/_CredentialManagement.dll"
+        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement._dll" -NewName "CredentialManagement.dll"
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
