@@ -58,7 +58,7 @@ jobs:
       - name: "Client: Create Release ZIP"
         uses: thedoctor0/zip-release@master
         with:
-          type: 'zip' 
+          type: 'zip'  
           filename: 'FreeDiscussions.Client-${{steps.get-version.outputs.version-prefix}}.zip'
           directory: ./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1
           exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json'      
