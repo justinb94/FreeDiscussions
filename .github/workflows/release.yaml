@@ -42,6 +42,10 @@ jobs:
       - name: "Client: Build"
         run: cd packages && dotnet build FreeDiscussions.Client
 
+      - name: Workaround
+        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement.dll" -NewName "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement._dll"
+
+
       - name: "Client: Sign"
         uses: DanaBear/code-sign-action@v4
         with:
@@ -51,6 +55,9 @@ jobs:
           certificatename: '${{ secrets.CERTNAME }}'
           folder: "packages"
           recursive: true
+
+      - name: Workaround
+        run: Rename-Item -Path "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/CredentialManagement._dll" -NewName "packages/FreeDiscussions.Client/bin/Debug/netcoreapp3.1/_CredentialManagement.dll"
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
