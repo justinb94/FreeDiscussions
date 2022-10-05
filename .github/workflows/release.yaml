@@ -6,10 +6,11 @@
 name: Release
 
 on:
-  pull_request:
+  # pull_request:
+  #   branches: [main]
+  #   types: [closed]
+  push:
     branches: [main]
-    types: [closed]
-
 
 jobs:
   build_and_test:
@@ -35,6 +36,17 @@ jobs:
 
       - name: "Client: Build"
         run: cd packages && dotnet build FreeDiscussions.Client
+
+      - name: "Client: Sign"
+        steps:
+        uses: DanaBear/code-sign-action@v4
+        with:
+          certificate: '${{ secrets.CERTIFICATE }}'
+          password: '${{ secrets.CERTPASSWORD }}'
+          certificatesha1: '${{ secrets.CERTHASH }}'
+          certificatename: '${{ secrets.CERTNAME }}'
+          folder: ./packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1
+          recursive: true
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
