@@ -77,7 +77,7 @@ jobs:
               }
               catch {
                   Write-Error $_
-              }
+              } 
           }
         env:
           BASE64_PFX: ${{ secrets.CERTIFICATE }}
