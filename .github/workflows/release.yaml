@@ -59,7 +59,15 @@ jobs:
           Get-ChildItem -Path "." -Filter ".git*" -Force | ForEach-Object {Remove-Item -Path $_.FullName -Recurse -Force}
           $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.*.dll" -Recurse -ErrorAction Stop
           # load cert
-          $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
+          
+
+          $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
+          Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
+          $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
+  
+          
+
+
           foreach ($script in $scripts) {
               try {
                     $scriptContent = Get-Content -Path $script.FullName
@@ -71,6 +79,9 @@ jobs:
                   Write-Error $_
               }
           }
+        env:
+          BASE64_PFX: ${{ secrets.CERTIFICATE }}
+          PFX_PASSWORD: ${{ secrets.CERTPASSWORD }}
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
