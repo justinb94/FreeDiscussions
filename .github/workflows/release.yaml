@@ -52,22 +52,15 @@ jobs:
       - name: "Client: Build"
         run: cd packages && dotnet build FreeDiscussions.Client
 
-      - name: "Client: Sign"
+
+      - name: Client: Sign
         shell: powershell
         run: |
           # remove git dir from checked out repo
           Get-ChildItem -Path "." -Filter ".git*" -Force | ForEach-Object {Remove-Item -Path $_.FullName -Recurse -Force}
-          $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.*.dll" -Recurse -ErrorAction Stop
+          $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.Client.dll" -Recurse -ErrorAction Stop
           # load cert
-          
-
-          $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
-          Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
-          $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
-  
-          
-
-
+          $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
           foreach ($script in $scripts) {
               try {
                     $scriptContent = Get-Content -Path $script.FullName
@@ -77,11 +70,8 @@ jobs:
               }
               catch {
                   Write-Error $_
-              } 
+              }
           }
-        env:
-          BASE64_PFX: ${{ secrets.CERTIFICATE }}
-          PFX_PASSWORD: ${{ secrets.CERTPASSWORD }}
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
