@@ -52,8 +52,7 @@ jobs:
       - name: "Client: Build"
         run: cd packages && dotnet build FreeDiscussions.Client
 
-
-      - name: Client: Sign
+      - name: "Client: Sign"
         shell: powershell
         run: |
           # remove git dir from checked out repo
