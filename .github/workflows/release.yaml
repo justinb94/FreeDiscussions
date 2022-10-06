@@ -29,15 +29,22 @@ jobs:
           git fetch --unshallow --tags
           git tag --list
 
-      - name: Import code signing certificate
-        shell: powershell
+      # - name: Import code signing certificate
+      #   shell: powershell
+      #   run: |
+      #     $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
+      #     Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
+      #     $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
+      #   env:
+      #     BASE64_PFX: ${{ secrets.CERTIFICATE }}
+      #     PFX_PASSWORD: ${{ secrets.CERTPASSWORD }}
+
+     - name: Create Code Signing Certificate
         run: |
-          $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
-          Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
-          $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
-        env:
-          BASE64_PFX: ${{ secrets.CERTIFICATE }}
-          PFX_PASSWORD: ${{ secrets.CERTPASSWORD }}
+          New-Item -ItemType directory -Path certificate
+          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.CERTIFICATE }}'
+          certutil -decode certificate\certificate.txt certificate\certificate.pfx
+          
 
       - uses: actions/setup-dotnet@v1
         with: 
@@ -53,25 +60,25 @@ jobs:
         run: cd packages && dotnet build FreeDiscussions.Client
 
 
-      - name: "Client: Sign"
-        shell: powershell
-        run: |
-          # remove git dir from checked out repo
-          Get-ChildItem -Path "." -Filter ".git*" -Force | ForEach-Object {Remove-Item -Path $_.FullName -Recurse -Force}
-          $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.Client.dll" -Recurse -ErrorAction Stop
-          # load cert
-          $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
-          foreach ($script in $scripts) {
-              try {
-                    $scriptContent = Get-Content -Path $script.FullName
-                    Write-Output "Signing `"$($script.Name)`" with certificate `"$($codeSigningCert.Thumbprint)`""
-                    # sign script
-                    $null = Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath $script.FullName -TimestampServer "http://timestamp.comodoca.com/rfc3161"
-              }
-              catch {
-                  Write-Error $_
-              }
-          }
+      # - name: "Client: Sign"
+      #   shell: powershell
+      #   run: |
+      #     # remove git dir from checked out repo
+      #     Get-ChildItem -Path "." -Filter ".git*" -Force | ForEach-Object {Remove-Item -Path $_.FullName -Recurse -Force}
+      #     $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.Client.dll" -Recurse -ErrorAction Stop
+      #     # load cert
+      #     $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
+      #     foreach ($script in $scripts) {
+      #         try {
+      #               $scriptContent = Get-Content -Path $script.FullName
+      #               Write-Output "Signing `"$($script.Name)`" with certificate `"$($codeSigningCert.Thumbprint)`""
+      #               # sign script
+      #               $null = Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath $script.FullName -TimestampServer "http://timestamp.comodoca.com/rfc3161"
+      #         }
+      #         catch {
+      #             Write-Error $_
+      #         }
+      #     }
 
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
