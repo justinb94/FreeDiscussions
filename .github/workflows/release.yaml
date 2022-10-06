@@ -39,7 +39,7 @@ jobs:
       #     BASE64_PFX: ${{ secrets.CERTIFICATE }}
       #     PFX_PASSWORD: ${{ secrets.CERTPASSWORD }}
 
-     - name: Create Code Signing Certificate
+      - name: Create Code Signing Certificate
         run: |
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.CERTIFICATE }}'
