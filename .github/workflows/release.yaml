@@ -59,7 +59,7 @@ jobs:
           proj-path: ./packages/examples/HelloWorldPlugin/HelloWorldPlugin.csproj
 
       - name: "HelloWorldPlugin: Build"
-        run: cd packages && dotnet build HelloWorldPlugin
+        run: cd packages/examples && dotnet build HelloWorldPlugin
 
 
       - name: "HelloWorldPlugin: Pack"
