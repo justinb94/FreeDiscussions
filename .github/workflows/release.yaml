@@ -50,6 +50,43 @@ jobs:
         with: 
           dotnet-version: '3.1.x'
 
+      ########################################################
+
+      - name: "HelloWorldPlugin: Get Version"
+        uses: kzrnm/get-net-sdk-project-versions-action@v1
+        id: get-version
+        with:
+          proj-path: ./packages/examples/HelloWorldPlugin/HelloWorldPlugin.csproj
+
+      - name: "HelloWorldPlugin: Build"
+        run: cd packages && dotnet build HelloWorldPlugin
+
+
+      - name: "HelloWorldPlugin: Pack"
+        run: cd packages && dotnet pack --configuration Release HelloWorldPlugin
+
+      - name: "HelloWorldPlugin Code Sign"
+        run: |
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /f certificate\certificate.pfx /p '${{ secrets.CERTPASSWORD }}' /t http://timestamp.comodoca.com/authenticode packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1/HelloWorldPlugin.dll
+
+      - name: "HelloWorldPlugin: Create Release ZIP"
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'  
+          filename: 'HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip'
+          directory: ./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1
+          exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json'      
+
+      - name: "HelloWorldPlugin: Upload Release ZIP"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1/HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip"
+          tag: Client-${{steps.get-version.outputs.version-prefix}}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+
+        ########################################################
+
       - name: "Client: Get Version"
         uses: kzrnm/get-net-sdk-project-versions-action@v1
         id: get-version
@@ -60,37 +97,16 @@ jobs:
         run: cd packages && dotnet build FreeDiscussions.Client
 
 
-      # - name: "Client: Sign"
-      #   shell: powershell
-      #   run: |
-      #     # remove git dir from checked out repo
-      #     Get-ChildItem -Path "." -Filter ".git*" -Force | ForEach-Object {Remove-Item -Path $_.FullName -Recurse -Force}
-      #     $scripts = Get-ChildItem -Path . -Filter "FreeDiscussions.Client.dll" -Recurse -ErrorAction Stop
-      #     # load cert
-      #     $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
-      #     foreach ($script in $scripts) {
-      #         try {
-      #               $scriptContent = Get-Content -Path $script.FullName
-      #               Write-Output "Signing `"$($script.Name)`" with certificate `"$($codeSigningCert.Thumbprint)`""
-      #               # sign script
-      #               $null = Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath $script.FullName -TimestampServer "http://timestamp.comodoca.com/rfc3161"
-      #         }
-      #         catch {
-      #             Write-Error $_
-      #         }
-      #     }
-
       - name: "Client: Pack"
         run: cd packages && dotnet pack --configuration Release FreeDiscussions.Client 
 
-      - name: Code Sign
+      - name: "Client Code Sign"
         run: |
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /f certificate\certificate.pfx /p '${{ secrets.CERTPASSWORD }}' /t http://timestamp.comodoca.com/authenticode packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1/FreeDiscussions.Client.dll
 
-      - name: Code Sign
+      - name: "Client Code Sign"
         run: |
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /f certificate\certificate.pfx /p '${{ secrets.CERTPASSWORD }}' /t http://timestamp.comodoca.com/authenticode packages/FreeDiscussions.Client/bin/Release/netcoreapp3.1/FreeDiscussions.Client.exe
-
 
       - name: "Client: Create Release ZIP"
         uses: thedoctor0/zip-release@master
