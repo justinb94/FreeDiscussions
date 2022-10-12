@@ -8,7 +8,7 @@ namespace HelloWorldPlugin
 	{
 		public override PanelType Type { get => PanelType.Sidebar; set { } }
 		public override string Guid { get => "HelloWorldPlugin"; set { } }
-		public override string Name { get => "Clock"; set { } }
+		public override string Name { get => "HelloWorld"; set { } }
 		public override string IconPath { get => "/HelloWorldPlugin;component/Resources/icon.svg"; set { } }
 
 		public override async Task<TabItemModel> Create(params object[] args)
