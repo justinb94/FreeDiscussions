@@ -61,26 +61,22 @@ jobs:
       - name: "HelloWorldPlugin: Build"
         run: cd packages/examples && dotnet build HelloWorldPlugin
 
-
-      - name: "HelloWorldPlugin: Pack"
-        run: cd packages/examples && dotnet pack --configuration Release HelloWorldPlugin
-
       - name: "HelloWorldPlugin Code Sign"
         run: |
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /f certificate\certificate.pfx /p '${{ secrets.CERTPASSWORD }}' /t http://timestamp.comodoca.com/authenticode packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1/HelloWorldPlugin.dll
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /f certificate\certificate.pfx /p '${{ secrets.CERTPASSWORD }}' /t http://timestamp.comodoca.com/authenticode packages/examples/HelloWorldPlugin/bin/Debug/netcoreapp3.1/HelloWorldPlugin.dll
 
       - name: "HelloWorldPlugin: Create Release ZIP"
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'  
           filename: 'HelloWorldPlugin-${{steps.get-version-plugin.outputs.version-prefix}}.zip'
-          directory: ./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1
+          directory: ./packages/examples/HelloWorldPlugin/bin/Debug/netcoreapp3.1
           exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json'      
 
       - name: "HelloWorldPlugin: Upload Release ZIP"
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1/HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip"
+          artifacts: "./packages/examples/HelloWorldPlugin/bin/Debug/netcoreapp3.1/HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip"
           tag: Client-${{steps.get-version-plugin.outputs.version-prefix}}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
