@@ -54,7 +54,7 @@ jobs:
 
       - name: "HelloWorldPlugin: Get Version"
         uses: kzrnm/get-net-sdk-project-versions-action@v1
-        id: get-version
+        id: get-version-plugin
         with:
           proj-path: ./packages/examples/HelloWorldPlugin/HelloWorldPlugin.csproj
 
@@ -73,7 +73,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'  
-          filename: 'HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip'
+          filename: 'HelloWorldPlugin-${{steps.get-version-plugin.outputs.version-prefix}}.zip'
           directory: ./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1
           exclusions: '*.git* /*node_modules/* .editorconfig *.pdb *.runtimeconfig.dev.json'      
 
@@ -81,7 +81,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "./packages/examples/HelloWorldPlugin/bin/Release/netcoreapp3.1/HelloWorldPlugin-${{steps.get-version.outputs.version-prefix}}.zip"
-          tag: Client-${{steps.get-version.outputs.version-prefix}}
+          tag: Client-${{steps.get-version-plugin.outputs.version-prefix}}
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
 
