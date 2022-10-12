@@ -63,7 +63,7 @@ jobs:
 
 
       - name: "HelloWorldPlugin: Pack"
-        run: cd packages && dotnet pack --configuration Release HelloWorldPlugin
+        run: cd packages/examples && dotnet pack --configuration Release HelloWorldPlugin
 
       - name: "HelloWorldPlugin Code Sign"
         run: |
