@@ -48,11 +48,14 @@ namespace FreeDiscussions
                         Console.WriteLine(ex);
                     }
                 }
-                
-                foreach (var plugin in PluginContainer.Instance.Plugins)
+
+                if (AppStart.Config.plugins != null)
                 {
-                   var pluginConfig = AppStart.Config.plugins.FirstOrDefault(x => x.Name.Equals(plugin.Guid));
-                   plugin.SetConfig(pluginConfig.config);
+                    foreach (var plugin in PluginContainer.Instance.Plugins)
+                    {
+                        var pluginConfig = AppStart.Config.plugins.FirstOrDefault(x => x.Name.Equals(plugin.Guid));
+                        plugin.SetConfig(pluginConfig.config);
+                    }
                 }
                 
             }

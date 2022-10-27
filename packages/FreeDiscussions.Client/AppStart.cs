@@ -27,7 +27,7 @@ namespace FreeDiscussions.Client
                 SplashScreenWnd.Show();
                 SplashScreenWnd.SetStatusText("loading config");
             });
-         
+
             // load config file, validate etc.
             var configFilePath = System.IO.Path.Combine(Environment.CurrentDirectory, "config.yaml");
             if (!File.Exists(configFilePath))
@@ -93,14 +93,21 @@ namespace FreeDiscussions.Client
             {
                 SplashScreenWnd.SetStatusText("find installed plugins");
             });
-            
+
             // find local plugins
-            var localPlugins = Directory.GetDirectories(pluginsDirectory).Select(x => new LocalPluginInfo
+            var localPlugins = Directory.GetDirectories(pluginsDirectory).Select(x =>
             {
-                Name = new DirectoryInfo(x).Name.Split("-").First(),
-                Version = Version.Parse(new DirectoryInfo(x).Name.Split("-").Last()),
-                Folder = new DirectoryInfo(x)
-            }).ToList();
+
+                var dir = new DirectoryInfo(x);
+                return new LocalPluginInfo
+                {
+                    Name = dir.Name.IndexOf("-") != -1 ? dir.Name.Split("-").First() : dir.Name,
+                    Version = dir.Name.IndexOf("-") != -1 ? Version.Parse(dir.Name.Split("-").Last()) : new Version(0, 0, 0, 0),
+                    Folder = new DirectoryInfo(x)
+                };
+            }
+            ).ToList();
+        
 
 
             // try download missing plugins

@@ -363,13 +363,20 @@ namespace FreeDiscussions.Client.UI
         {
             var result = new List<MainWindowViewModel.PluginMenuItemModel>();
 
-            var manager = new PluginManager();
-            manager.Setup();
+            try
+            {
+                var manager = new PluginManager();
+                manager.Setup();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cant load plugins!");
+                Console.WriteLine(ex);
+            };
 
             try
             {
-
-                var path = System.IO.Path.Combine(Environment.CurrentDirectory, "_FreeDiscussions.Client.dll");
+                var path = System.IO.Path.Combine(Environment.CurrentDirectory, "FreeDiscussions.Client.dll");
                 var referencePath = X509Certificate.CreateFromSignedFile(path);
                 var referenceCert = new X509Certificate2(referencePath);
                 var referenceHash = referenceCert.GetCertHash();
@@ -377,7 +384,7 @@ namespace FreeDiscussions.Client.UI
 
                 foreach (var plugin in PluginContainer.Instance.Plugins)
                 {
-                    var cert2 = X509Certificate.CreateFromSignedFile(System.IO.Path.Combine(plugin.Path, "_FreeDiscussions.Client.dll"));
+                    var cert2 = X509Certificate.CreateFromSignedFile(System.IO.Path.Combine(plugin.Path, "FreeDiscussions.Client.dll"));
                     var certb2 = new X509Certificate2(cert2);
                     var hash2 = certb2.GetCertHash();
 

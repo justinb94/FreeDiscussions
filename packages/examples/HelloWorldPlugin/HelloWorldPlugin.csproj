@@ -3,14 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>0.0.2</VersionPrefix>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>D:\Development\Github\free-discussions\packages\FreeDiscussions.Client\bin\Debug\netcoreapp3.1\_plugins\</OutputPath>
+    <OutputPath>D:\Development\Github\free-discussions\packages\FreeDiscussions.Client\bin\Debug\netcoreapp3.1\plugins\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
