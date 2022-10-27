@@ -29,6 +29,12 @@ namespace FreeDiscussions.Plugin
         /// Plugin path
         /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// Set by the client
+        /// </summary>
+        public bool IsOffical { get; set; }
+
         /// <summary>
         /// Creates a tab item
         /// </summary>
@@ -43,5 +49,10 @@ namespace FreeDiscussions.Plugin
         {
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// Set by the client
+        /// </summary>
+        public virtual void SetConfig(Dictionary<string, string> config) { }
     }
 }

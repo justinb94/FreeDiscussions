@@ -6,7 +6,7 @@
     <VersionPrefix>0.0.1</VersionPrefix>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <BaseOutputPath>D:\Development\Github\free-discussions\packages\FreeDiscussions.Client\bin\Debug\netcoreapp3.1\plugins</BaseOutputPath>
+    <BaseOutputPath></BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

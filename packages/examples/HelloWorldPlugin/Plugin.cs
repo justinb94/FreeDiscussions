@@ -20,7 +20,7 @@ namespace HelloWorldPlugin
 				IconPath = this.IconPath,
 				Control = new Panel(() =>
 				{
-					// do something when the user closes the tab
+					// do something when the user closes the tab 
 				})
 			};
 		}

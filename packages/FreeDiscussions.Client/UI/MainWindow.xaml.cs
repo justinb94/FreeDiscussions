@@ -23,6 +23,9 @@ using Usenet.Nntp.Models;
 using System.IO;
 using Usenet.Nntp;
 using Usenet.Nzb;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace FreeDiscussions.Client.UI
 {
@@ -43,81 +46,112 @@ namespace FreeDiscussions.Client.UI
         static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out string pszPath);
 
 
+        FileSystemWatcher configFileWatcher;
+        DateTime lastConfigFileWrite;
 
         public MainWindow()
         {
-
-            Configuration.doIt();
-
-
-            AppContext.SetSwitch("Switch.System.Runtime.Serialization.SerializationGuard.AllowFileWrites", true);
-
+            this.Visibility = Visibility.Hidden;
             InitializeComponent();
+            Init();
+        }
 
-            Context.UIController = this;
-            Context.DownloadController = this;
+        private async Task Init()
+        {
 
-            // initialize logger
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File("log_.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            // open splashscreen
+            var wnd = new SplashScreen();
+            wnd.Show();
 
-            var factory = new LoggerFactory();
-            factory.AddSerilog();
-            Usenet.Logger.Factory = factory;
-
-            // TODO: load plugins
-
-            // create and bind view model
-            this.DataContext = new MainWindowViewModel
+            // start task
+            var canRun = await Task.Run(async () =>
             {
-                CloseButtonClick = new DelegateCommand<object>((o) =>
+                var result = await AppStart.Run(wnd);
+                return result;
+            });
+
+
+            if (!canRun)
+            {
+                wnd.Close();
+                this.Close();
+                return;
+            }
+
+            configFileWatcher = new FileSystemWatcher();
+            configFileWatcher.Path = System.IO.Path.Combine(Environment.CurrentDirectory);
+            configFileWatcher.Changed += new FileSystemEventHandler(OnConfigFileChanged);
+            configFileWatcher.EnableRaisingEvents = true;
+            lastConfigFileWrite = new FileInfo(System.IO.Path.Combine(Environment.CurrentDirectory, "config.yaml")).LastWriteTime;
+
+
+            await Dispatcher.Invoke(async () =>
+            {
+                // close splashscreen
+                wnd.Close();
+
+                Context.UIController = this;
+                Context.DownloadController = this;
+
+                // initialize logger
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.File("log_.txt", rollingInterval: RollingInterval.Day)
+                    .CreateLogger();
+
+                var factory = new LoggerFactory();
+                factory.AddSerilog();
+                Usenet.Logger.Factory = factory;
+
+                // create and bind view model
+                this.DataContext = new MainWindowViewModel
                 {
-                    this.Close();
-                }),
-                MaximizeButtonClick = new DelegateCommand<object>((o) =>
-                {
-                    this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-                }),
-                MinimizeButtonClick = new DelegateCommand<object>((o) =>
-                {
-                    this.WindowState = WindowState.Minimized;
-                }),
-                GithubButtonClick = new DelegateCommand<object>((o) =>
-                {
-                    var uri = "https://github.com/justinb94/FreeDiscussions";
-                    var psi = new System.Diagnostics.ProcessStartInfo();
-                    psi.UseShellExecute = true;
-                    psi.FileName = uri;
-                    System.Diagnostics.Process.Start(psi);
-                }),
-                DotsClicked = new DelegateCommand<object>((sender) =>
-                {
-                    var me = this.DataContext as MainWindowViewModel;
-                    me.ContextMenuVisibility = me.ContextMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
-                    me.PluginMenuVisibility = Visibility.Hidden;
-                }),
-                HideContextMenus = new DelegateCommand<object>((sender) =>
-                {
-                    var me = this.DataContext as MainWindowViewModel;
-                    me.ContextMenuVisibility = Visibility.Hidden;
-                    me.PluginMenuVisibility = Visibility.Hidden;
-                }),
-                PuzzleClicked = new DelegateCommand<object>((sender) =>
-                {
-                    var me = this.DataContext as MainWindowViewModel;
-                    me.PluginMenuVisibility = me.PluginMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
-                    me.ContextMenuVisibility = Visibility.Hidden;
-                }),
-                HidePluginMenu = new DelegateCommand<object>((sender) =>
-                {
-                    var me = this.DataContext as MainWindowViewModel;
-                    me.PluginMenuVisibility = Visibility.Hidden;
-                }),
-                ContextMenuItems = new List<MainWindowViewModel.ContextMenuItemModel>
-                {
+                    CloseButtonClick = new DelegateCommand<object>((o) =>
+                    {
+                        this.Close();
+                    }),
+                    MaximizeButtonClick = new DelegateCommand<object>((o) =>
+                    {
+                        this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+                    }),
+                    MinimizeButtonClick = new DelegateCommand<object>((o) =>
+                    {
+                        this.WindowState = WindowState.Minimized;
+                    }),
+                    GithubButtonClick = new DelegateCommand<object>((o) =>
+                    {
+                        var uri = "https://github.com/justinb94/FreeDiscussions";
+                        var psi = new System.Diagnostics.ProcessStartInfo();
+                        psi.UseShellExecute = true;
+                        psi.FileName = uri;
+                        System.Diagnostics.Process.Start(psi);
+                    }),
+                    DotsClicked = new DelegateCommand<object>((sender) =>
+                    {
+                        var me = this.DataContext as MainWindowViewModel;
+                        me.ContextMenuVisibility = me.ContextMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+                        me.PluginMenuVisibility = Visibility.Hidden;
+                    }),
+                    HideContextMenus = new DelegateCommand<object>((sender) =>
+                    {
+                        var me = this.DataContext as MainWindowViewModel;
+                        me.ContextMenuVisibility = Visibility.Hidden;
+                        me.PluginMenuVisibility = Visibility.Hidden;
+                    }),
+                    PuzzleClicked = new DelegateCommand<object>((sender) =>
+                    {
+                        var me = this.DataContext as MainWindowViewModel;
+                        me.PluginMenuVisibility = me.PluginMenuVisibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+                        me.ContextMenuVisibility = Visibility.Hidden;
+                    }),
+                    HidePluginMenu = new DelegateCommand<object>((sender) =>
+                    {
+                        var me = this.DataContext as MainWindowViewModel;
+                        me.PluginMenuVisibility = Visibility.Hidden;
+                    }),
+                    ContextMenuItems = new List<MainWindowViewModel.ContextMenuItemModel>
+            {
                     new MainWindowViewModel.ContextMenuItemModel
                     {
                         Name = "Settings...",
@@ -142,7 +176,6 @@ namespace FreeDiscussions.Client.UI
                         Name = "About...",
                         Click = new DelegateCommand<object>((o) =>
                         {
-                            // TODO: open about window
                             var me = this.DataContext as MainWindowViewModel;
                             me.ContextMenuVisibility = Visibility.Hidden;
                         })
@@ -155,35 +188,44 @@ namespace FreeDiscussions.Client.UI
                             this.Close();
                         }),
                     }
-                },
-                PinPluginClicked = new DelegateCommand<object>((o) =>
-                {
-                    Console.WriteLine(o);
-                }),
-                ContextMenuVisibility = Visibility.Hidden,
-                PluginMenuVisibility = Visibility.Hidden,
-                HideSidebar = new DelegateCommand<object>((o) =>
-                {
-                    this.HideSidebar();
-                }),
-                ShowSidebar = new DelegateCommand<object>((o) =>
-                {
-                    this.ShowSidebar();
-                }),
-                PluginMenuItems = new List<MainWindowViewModel.PluginMenuItemModel>()
-            };
+            },
+                    PinPluginClicked = new DelegateCommand<object>((o) =>
+                    {
+                        Console.WriteLine(o);
+                    }),
+                    ContextMenuVisibility = Visibility.Hidden,
+                    PluginMenuVisibility = Visibility.Hidden,
+                    HideSidebar = new DelegateCommand<object>((o) =>
+                    {
+                        this.HideSidebar();
+                    }),
+                    ShowSidebar = new DelegateCommand<object>((o) =>
+                    {
+                        this.ShowSidebar();
+                    }),
+                    PluginMenuItems = new List<MainWindowViewModel.PluginMenuItemModel>()
+                };
 
-            // open home panel on start
-            Context.UIController.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
-            {
-                HeaderText = "Home",
-                IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
-                Control = new NewsgroupsPanel(() => { }),
+                    // open home panel on start
+                await Context.UIController.OpenPanel(PanelType.Sidebar, new TabItemModel("Home")
+                {
+                    HeaderText = "Home",
+                    IconPath = "/FreeDiscussions.Client;component/Resources/home.svg",
+                    Control = new NewsgroupsPanel(() => { }),
+                });
+
+                await CheckConnectionOrShowSettingsPanel();
+                await LoadPluginMenuItems();
+
+                this.Visibility = Visibility.Visible;
+
             });
+        }
 
-            Task.Run(async () => await CheckConnectionOrShowSettingsPanel());
-            Task.Run(async () => await LoadPluginMenuItems());
-            //this.InitializePlugins();
+        private void OnConfigFileChanged(object sender, FileSystemEventArgs e)
+        {
+            if (new FileInfo(System.IO.Path.Combine(Environment.CurrentDirectory, "config.yaml")).LastWriteTime != lastConfigFileWrite)
+                MessageBox.Show("Config file changed, please restart the app.");
         }
 
         private async Task CheckConnectionOrShowSettingsPanel()
@@ -323,6 +365,43 @@ namespace FreeDiscussions.Client.UI
 
             var manager = new PluginManager();
             manager.Setup();
+
+            try
+            {
+
+                var path = System.IO.Path.Combine(Environment.CurrentDirectory, "_FreeDiscussions.Client.dll");
+                var referencePath = X509Certificate.CreateFromSignedFile(path);
+                var referenceCert = new X509Certificate2(referencePath);
+                var referenceHash = referenceCert.GetCertHash();
+
+
+                foreach (var plugin in PluginContainer.Instance.Plugins)
+                {
+                    var cert2 = X509Certificate.CreateFromSignedFile(System.IO.Path.Combine(plugin.Path, "_FreeDiscussions.Client.dll"));
+                    var certb2 = new X509Certificate2(cert2);
+                    var hash2 = certb2.GetCertHash();
+
+                    if (referenceHash.SequenceEqual(hash2))
+                    {
+                        // official plugin
+                        plugin.IsOffical = true;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+
+
+            //// Exception: Guuuuut
+            //var cert3 = X509Certificate.CreateFromSignedFile(@"C:\Users\Denis\Downloads\FreeDiscussions.Client-0.2.4(1)\CredentialManagement.dll");
+            //var certb3 = new X509Certificate2(cert);
+            //var hash3 = certb3.GetCertHash();
+
+
 
             try
             {

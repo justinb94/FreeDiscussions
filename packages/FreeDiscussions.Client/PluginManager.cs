@@ -1,9 +1,11 @@
-﻿using FreeDiscussions.Plugin;
+﻿using FreeDiscussions.Client;
+using FreeDiscussions.Plugin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FreeDiscussions
@@ -39,12 +41,20 @@ namespace FreeDiscussions
                     for (var i = countBefore; i != PluginContainer.Instance.Plugins.Count; i++)
                     {
                         PluginContainer.Instance.Plugins[i].Path = dir;
+                     
                     }
                     } catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                     }
                 }
+                
+                foreach (var plugin in PluginContainer.Instance.Plugins)
+                {
+                   var pluginConfig = AppStart.Config.plugins.FirstOrDefault(x => x.Name.Equals(plugin.Guid));
+                   plugin.SetConfig(pluginConfig.config);
+                }
+                
             }
             catch (CompositionException compositionException)
             {
